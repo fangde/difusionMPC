@@ -1,4 +1,4 @@
-# Model-Driven Diffusion: Replacing Statistical Drift with Optimal Control for Underactuated Systems
+# Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Paper%20Site-blue?logo=github)](https://fangde.github.io/difusionMPC/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
@@ -133,7 +133,7 @@ difusionMPC/
 
 ```bibtex
 @article{model_driven_diffusion2026,
-  title={Model-Driven Diffusion: Replacing Statistical Drift with Optimal Control for Underactuated Systems},
+  title={Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems},
   author={Liu, Fangde},
   journal={arXiv preprint},
   year={2026}

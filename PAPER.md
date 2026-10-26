@@ -1,4 +1,4 @@
-# Model-Driven Diffusion: Replacing Statistical Drift with Optimal Control for Underactuated Systems
+# Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems
 
 **Authors**: Research Draft  
 **Target Venue**: IEEE Robotics and Automation Letters (RA-L) / Conference on Robot Learning (CoRL) / Learning for Dynamics & Control (L4DC)

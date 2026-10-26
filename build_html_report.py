@@ -190,7 +190,7 @@ def build_report():
 <body>
     <div class="container">
         <header>
-            <h1>Model-Driven Diffusion: Replacing Statistical Drift with Optimal Control</h1>
+            <h1>Model-Driven Diffusion: Replacing Statistics with Dynamics</h1>
             <p>Empirical Benchmark on Underactuated Double Pendulum Stabilization</p>
             <span class="badge">Hardware: Apple Silicon (MPS) • Control Frequency: 50 Hz</span>
         </header>
