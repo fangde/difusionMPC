@@ -201,3 +201,54 @@ class ModelDrivenDiffusionPolicy:
     def get_restoring_vector(self, state):
         u, x_dot = self.mpc.get_optimal_control(state)
         return x_dot
+
+
+class ModelDrivenNeuralFlowPolicy:
+    """
+    Neural Flow Policy trained on demonstration data via Model-Driven Velocity Matching.
+    Trained as a neural network on N trajectories to predict the optimal control velocity field.
+    Its performance actively scales with training dataset size N and perturbation noise sigma.
+    """
+    def __init__(self, state_dim=4, action_dim=1, num_steps=10, device='cpu'):
+        self.device = device
+        self.num_steps = num_steps
+        self.action_dim = action_dim
+        self.model = FlowMatchingMLP(state_dim, action_dim).to(device)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-3)
+
+    def train_step(self, states, actions):
+        self.model.train()
+        batch_size = states.shape[0]
+        
+        states_t = torch.as_tensor(states, dtype=torch.float32, device=self.device)
+        u_star = torch.as_tensor(actions, dtype=torch.float32, device=self.device)
+        u0 = torch.randn_like(u_star)
+        
+        tau = torch.rand(batch_size, device=self.device)
+        tau_expanded = tau.unsqueeze(-1)
+        
+        u_tau = (1.0 - tau_expanded) * u0 + tau_expanded * u_star
+        target_velocity = u_star - u0
+        
+        pred_velocity = self.model(u_tau, tau, states_t)
+        loss = F.mse_loss(pred_velocity, target_velocity)
+        
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+        return loss.item()
+
+    @torch.no_grad()
+    def get_action(self, state, u_max=15.0):
+        self.model.eval()
+        state_t = torch.as_tensor(state, dtype=torch.float32, device=self.device).unsqueeze(0)
+        u = torch.randn(1, self.action_dim, device=self.device)
+        dt = 1.0 / self.num_steps
+        
+        for step in range(self.num_steps):
+            tau = torch.tensor([step * dt], device=self.device)
+            v = self.model(u, tau, state_t)
+            u = u + v * dt
+            
+        action = u.squeeze().cpu().numpy()
+        return float(np.clip(action, -u_max, u_max))

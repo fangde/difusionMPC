@@ -312,7 +312,7 @@
     <!-- Header -->
     <header>
         <span class="venue-badge">Research Project & Simulation Benchmark</span>
-        <h1>Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems</h1>
+        <h1>Model-Driven Diffusion: Replacing Statistics with Dynamics</h1>
         <p class="subtitle">A unified vector-field framework grounding diffusion and flow matching in physical dynamics, eliminating demonstration data requirements while guaranteeing underactuated feasibility.</p>
         
         <div class="btn-group">
@@ -397,16 +397,17 @@
                         <th>Training Demonstrations ($N$)</th>
                         <th>Score Diffusion (DDPM)</th>
                         <th>Flow Matching (CFM)</th>
-                        <th>Model-Driven Diffusion (Ours)</th>
+                        <th>Model-Driven Neural Flow</th>
+                        <th>Analytical MPC Ceiling</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>$N = 0$ (Zero Data)</td><td>N/A (Fails)</td><td>N/A (Fails)</td><td class="win">86.0%</td></tr>
-                    <tr><td>$N = 50$</td><td>0.0%</td><td>53.0%</td><td class="win">86.0%</td></tr>
-                    <tr><td>$N = 100$</td><td>0.0%</td><td>66.0%</td><td class="win">86.0%</td></tr>
-                    <tr><td>$N = 250$</td><td>0.0%</td><td>47.0%</td><td class="win">86.0%</td></tr>
-                    <tr><td>$N = 500$</td><td>0.0%</td><td>34.0%</td><td class="win">86.0%</td></tr>
-                    <tr><td>$N = 1000$</td><td>0.0%</td><td>69.0%</td><td class="win">86.0%</td></tr>
+                    <tr><td>$N = 25$</td><td>0.0%</td><td>27.0%</td><td class="win">28.0%</td><td>86.0%</td></tr>
+                    <tr><td>$N = 50$</td><td>0.0%</td><td>43.0%</td><td class="win">62.0%</td><td>86.0%</td></tr>
+                    <tr><td>$N = 100$</td><td>0.0%</td><td>64.0%</td><td>56.0%</td><td>86.0%</td></tr>
+                    <tr><td>$N = 250$</td><td>0.0%</td><td>45.0%</td><td class="win">48.0%</td><td>86.0%</td></tr>
+                    <tr><td>$N = 500$</td><td>0.0%</td><td>43.0%</td><td class="win">53.0%</td><td>86.0%</td></tr>
+                    <tr><td>$N = 1000$</td><td>0.0%</td><td>70.0%</td><td>50.0%</td><td>86.0%</td></tr>
                 </tbody>
             </table>
         </section>
@@ -466,7 +467,7 @@
         <section>
             <h2>📚 Citation</h2>
             <pre><code>@article{model_driven_diffusion2026,
-  title={Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems},
+  title={Model-Driven Diffusion: Replacing Statistics with Dynamics},
   author={Liu, Fangde},
   journal={arXiv preprint},
   year={2026}

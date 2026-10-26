@@ -1,4 +1,4 @@
-# Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems
+# Model-Driven Diffusion: Replacing Statistics with Dynamics
 
 **Authors**: Research Draft  
 **Target Venue**: IEEE Robotics and Automation Letters (RA-L) / Conference on Robot Learning (CoRL) / Learning for Dynamics & Control (L4DC)
@@ -214,11 +214,11 @@ We adopt standard physical benchmark parameters for the double pendulum:
 
 The following results compare policy stabilization performance at $\sigma = 0.15\text{ rad}$ as a function of the available offline training trajectories:
 
-| Method | $N = 50$ | $N = 100$ | $N = 250$ | $N = 500$ | $N = 1000$ | Zero-Data ($N=0$) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Score-Based Diffusion (DDPM)** | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | N/A |
-| **Conditional Flow Matching (CFM)** | 53.0% | 66.0% | 47.0% | 34.0% | 69.0% | N/A |
-| **Model-Driven Diffusion (Ours)** | **86.0%** | **86.0%** | **86.0%** | **86.0%** | **86.0%** | **86.0%** |
+| Method | $N = 25$ | $N = 50$ | $N = 100$ | $N = 250$ | $N = 500$ | $N = 1000$ | Analytical Ceiling |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Score-Based Diffusion (DDPM)** | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | N/A |
+| **Conditional Flow Matching (CFM)** | 27.0% | 43.0% | 64.0% | 45.0% | 43.0% | 70.0% | N/A |
+| **Model-Driven Neural Flow** | **28.0%** | **62.0%** | **56.0%** | **48.0%** | **53.0%** | **50.0%** | **86.0%** |
 
 > **Key Observation**: 
 > 1. Score-based diffusion completely fails (0.0% success rate) because the stochastic Brownian noise inherent in the reverse denoising steps injects high-frequency torque jitter. On an underactuated double pendulum, unguided score jitter pumps destructive energy into the passive elbow, immediately causing dynamic divergence.

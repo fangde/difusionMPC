@@ -1,4 +1,4 @@
-# Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems
+# Model-Driven Diffusion: Replacing Statistics with Dynamics
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Paper%20Site-blue?logo=github)](https://fangde.github.io/difusionMPC/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
@@ -54,14 +54,14 @@ Starting from identical perturbed initial state $[0.22, -0.18, 0.10, -0.10]$ to 
 
 ![Sample Efficiency](figures/success_rate_vs_dataset_size.png)
 
-| Training Demonstrations ($N$) | Score Diffusion (DDPM) | Flow Matching (CFM) | Model-Driven Diffusion (Ours) |
-| :---: | :---: | :---: | :---: |
-| **$N = 0$ (Zero Data)** | *Fails* | *Fails* | **86.0%** |
-| **$N = 50$** | 0.0% | 53.0% | **86.0%** |
-| **$N = 100$** | 0.0% | 66.0% | **86.0%** |
-| **$N = 250$** | 0.0% | 47.0% | **86.0%** |
-| **$N = 500$** | 0.0% | 34.0% | **86.0%** |
-| **$N = 1000$** | 0.0% | 69.0% | **86.0%** |
+| Training Demonstrations ($N$) | Score Diffusion (DDPM) | Flow Matching (CFM) | Model-Driven Neural Flow | Analytical MPC Ceiling |
+| :---: | :---: | :---: | :---: | :---: |
+| **$N = 25$** | 0.0% | 27.0% | **28.0%** | **86.0%** |
+| **$N = 50$** | 0.0% | 43.0% | **62.0%** | **86.0%** |
+| **$N = 100$** | 0.0% | 64.0% | **56.0%** | **86.0%** |
+| **$N = 250$** | 0.0% | 45.0% | **48.0%** | **86.0%** |
+| **$N = 500$** | 0.0% | 43.0% | **53.0%** | **86.0%** |
+| **$N = 1000$** | 0.0% | 70.0% | **50.0%** | **86.0%** |
 
 ---
 
@@ -133,7 +133,7 @@ difusionMPC/
 
 ```bibtex
 @article{model_driven_diffusion2026,
-  title={Model-Driven Diffusion: Replacing Statistics with Dynamics for Underactuated Systems},
+  title={Model-Driven Diffusion: Replacing Statistics with Dynamics},
   author={Liu, Fangde},
   journal={arXiv preprint},
   year={2026}
