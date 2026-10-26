@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# Large demonstration datasets (can be re-generated via dataset_generator.py)
+# data/*.npy
