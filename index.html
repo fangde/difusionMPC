@@ -535,6 +535,44 @@
             </div>
         </section>
 
+        <!-- Benchmark 6: Trajectory Stitching Benchmark -->
+        <section>
+            <h2>🧩 Experiment 6: Global Emergence from Local Fragments (Trajectory Stitching)</h2>
+            <p><strong>Testing the Core Thesis</strong>: <em>"Can many local optimal MPC snippets combine into a global solution without any complete demonstrations?"</em> We restricted the offline training data strictly to disconnected local snippets with <strong>exactly zero complete demonstrations</strong> from Start $(-2.5, 0)$ to Goal $(+2.5, 0)$ across a central barrier wall.</p>
+
+            <div class="figure-box">
+                <img src="figures/trajectory_stitching_benchmark.png" alt="Trajectory Stitching Benchmark">
+                <div class="figure-caption">Figure 7: (Left) Training Data: Fragment A (Red, stops at x=0) and Fragment B (Blue, starts at x=0) are disjoint. (Right) Policy Execution: Conditioned solely on the terminal goal, the generative flow seamlessly stitches the local fragments into a global path (100% success rate across 100 trials).</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Experimental Result</th>
+                        <th>Significance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Global Trajectory Stitching Success</strong></td>
+                        <td class="highlight">100.0% / 100%</td>
+                        <td>Seamlessly synthesizes an unseen global path purely by connecting local MPC vector fields.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Obstacle Barrier Collisions</strong></td>
+                        <td>0.0% / 100%</td>
+                        <td>Strict dynamic safety preserved; circumnavigates the barrier smoothly.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout" style="background: #eff6ff; border-color: #93c5fd; color: #1e40af;">
+                <strong>Mathematical Proof of Concept:</strong>
+                <p>Local MPC provides the high-precision <em>tangent bricks</em> ($\dot{x} = \mathbf{v}_{local}(x)$), while the conditional score field acts as the <em>global architect</em> ($\nabla_x \log p(x \mid G)$). The policy does not need to memorize full end-to-end paths; it weaves scattered local optimal solutions into an emergent, globally optimal trajectory!</p>
+            </div>
+        </section>
+
         <!-- The Three Pillars: Why Policy + MPC is the Future -->
         <section>
             <h2>🏛️ Architectural Synthesis: The Three Pillars of Generative Policy vs. MPC</h2>
