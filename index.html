@@ -640,6 +640,26 @@
             </div>
         </section>
 
+        <!-- Benchmark 8: Orthogonal Flow Decomposition -->
+        <section>
+            <h2>🌀 Experiment 8: The Orthogonal Flow Decomposition ($v(x) = v_0(x) + w(x)$)</h2>
+            <p><strong>The Definitive Formulation</strong>: <em>"Instead of learning trajectories from MPC, learn a stable physical vector field from local MPC feedback, and use a generative model to explore diverse trajectories that preserve its stability properties."</em></p>
+            
+            <p>We decompose the continuous vector field into two mutually orthogonal components:</p>
+            $$\mathbf{v}(x) = \mathbf{v}_0(x) + \mathbf{w}(x) \quad \text{with} \quad \nabla V(x)^T \mathbf{w}(x) \equiv 0$$
+            <p>where $\mathbf{v}_0(x)$ is the contractive stabilizing base field ($\dot{V} = \nabla V^T \mathbf{v}_0 \le -\alpha V$), and $\mathbf{w}(x)$ is the generative tangential flow along the level sets of $V(x)$. Because $\nabla V(x)^T \mathbf{w}(x) = 0$, the generative flow cannot alter the instantaneous Lyapunov descent rate!</p>
+
+            <div class="figure-container">
+                <img src="figures/limit_cycle_orthogonal_decomposition.png" alt="Limit Cycle Orthogonal Flow Decomposition">
+                <div class="figure-caption"><strong>Figure 8:</strong> The Orthogonal Vector Field Decomposition on a 2D Limit Cycle ($r = R = 1.0$). (A) Vector field decomposition: base radial field (blue) enforces contraction; generative tangential field explores the limit cycle. (B) Multimodal trajectories (Mode A: CCW green; Mode B: CW orange) strictly converge to the exact same limit cycle. (C) Lyapunov error $V(x_t)$ decays monotonically to $10^{-6}$ even from extreme OOD shocks ($r_0 = 0.25$ and $r_0 = 2.4$).</div>
+            </div>
+
+            <div class="callout" style="background: #eff6ff; border-color: #93c5fd; color: #1e40af;">
+                <strong>The Core Breakthrough:</strong>
+                <p>Stability is provided by the base vector field ($\mathbf{v}_0$); trajectory diversity and multimodal task execution are provided by the generative model ($\mathbf{w}$). This gives the generative model maximal exploration freedom along the level sets of $V$, without ever threatening stability!</p>
+            </div>
+        </section>
+
         <!-- The Three Pillars: Why Policy + MPC is the Future -->
         <section>
             <h2>🏛️ Architectural Synthesis: The Three Pillars of Generative Policy vs. MPC</h2>
