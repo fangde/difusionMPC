@@ -7,7 +7,8 @@
 
 > **Paper Draft & Project Website**: [https://fangde.github.io/difusionMPC/](https://fangde.github.io/difusionMPC/)  
 > **Interactive HTML Experiment Report**: [experiment_report.html](https://fangde.github.io/difusionMPC/experiment_report.html)  
-> **Full Paper Draft (Markdown)**: [PAPER.md](PAPER.md)
+> **Full Paper Draft (Markdown)**: [PAPER.md](PAPER.md)  
+> **Tutorial Paper & Code Guide**: [TUTORIAL_PAPER.md](TUTORIAL_PAPER.md)
 
 ---
 
