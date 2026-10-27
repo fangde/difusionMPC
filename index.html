@@ -354,9 +354,17 @@
 
         <!-- Abstract -->
         <section>
-            <h2>📖 Abstract</h2>
+            <h2>📖 Abstract & Core Thesis</h2>
             <div class="abstract-box">
-                Generative models, notably Denoising Diffusion Probabilistic Models (DDPM) and Continuous Normalizing Flows via Flow Matching (CFM), have demonstrated remarkable efficacy in robot imitation learning and trajectory generation. However, both paradigms fundamentally rely on statistical conditioning: their velocity and score fields regress onto empirical averages of offline demonstrations. When applied to underactuated, dynamically constrained physical systems—such as an underactuated double pendulum with a single motor actuator—statistical interpolation routinely violates non-holonomic constraints and equations of motion, leading to control failure under perturbations. In this work, we propose <strong>Model-Driven Diffusion</strong>. Rather than matching empirical demonstration differences, Model-Driven Diffusion defines the generative drift velocity directly using Model Predictive Control (MPC) and Hamiltonian dynamics. We establish a unified vector-field framework comparing: (1) Score-based Diffusion, (2) Conditional Flow Matching, and (3) Model-Driven Diffusion under identical perturbation-recovery conditions from stable upright equilibria. Rigorous Monte Carlo benchmarking proves that Model-Driven Diffusion achieves near-optimal recovery success rates while completely eliminating the requisite offline training data.
+                <p>Generative policies (such as Diffusion Policy and Flow Matching) have excelled at robot imitation learning. However, both paradigms fundamentally treat control as statistical trajectory regression: their velocity and score fields learn empirical averages over offline demonstrations. When applied to dynamically constrained and underactuated systems, statistical interpolation violates dynamic constraints, leading to catastrophic failure under out-of-distribution disturbances.</p>
+                
+                <p style="margin-top: 12px;"><strong>Crucially, stability is not a 1-dimensional trajectory; it is an open topological neighborhood (invariant set / basin of attraction).</strong></p>
+                
+                <p style="margin-top: 12px;">We propose <strong>Model-Driven Diffusion</strong>, decoupling generative control into a <strong>Topological-Metric Duality</strong>:</p>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li><strong>Topology via Controller</strong>: A physics-grounded controller defines the contractive vector field over the phase-space neighborhood, ensuring structural Lyapunov stability ($\dot{V} \le 0$). <em>When noise occurs, the response may be dynamically sub-optimal, but stability is preserved as a hard invariant.</em></li>
+                    <li><strong>Metric via Demonstrations</strong>: Within this topologically stable funnel, diffusion/flow matching learns the Riemannian metric—optimizing multi-modal paths, velocities, timings, and task-specific styles demonstrated by humans.</li>
+                </ul>
             </div>
         </section>
 

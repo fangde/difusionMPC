@@ -6,7 +6,13 @@
 ---
 
 ## Abstract
-Generative models, notably Denoising Diffusion Probabilistic Models (DDPM) and Continuous Normalizing Flows via Flow Matching (CFM), have demonstrated remarkable efficacy in robot imitation learning and trajectory generation. However, both paradigms fundamentally rely on statistical conditioning: their velocity and score fields regress onto empirical averages of offline demonstrations. When applied to underactuated, dynamically constrained physical systems—such as an underactuated double pendulum with a single motor actuator—statistical interpolation routinely violates non-holonomic constraints and equations of motion, leading to control failure under perturbations. In this work, we propose **Optimal Control Velocity Flows (OC-Flow)**. Rather than matching empirical demonstration differences, OC-Flow directly defines the generative drift velocity using Model Predictive Control (MPC) and Hamiltonian costate descent. We establish a unified vector-field framework comparing: (1) Score-based Diffusion, (2) Conditional Flow Matching, and (3) Optimal Control Flows under identical perturbation-recovery conditions from stable upright equilibria. We formulate the theoretical conditions under which statistical flows yield dynamically inadmissible control vectors and demonstrate through rigorous benchmarking that OC-Flow achieves near-optimal recovery success rates while dramatically reducing the requisite offline training data.
+Generative models, notably Denoising Diffusion Probabilistic Models (DDPM) and Continuous Normalizing Flows via Flow Matching (CFM), have demonstrated remarkable efficacy in robot imitation learning and trajectory generation. However, both paradigms fundamentally treat policy learning as statistical conditioning over demonstrations: their velocity and score fields regress onto empirical averages of offline data. When applied to dynamically constrained and underactuated systems—such as an underactuated double pendulum with a single motor actuator—statistical interpolation routinely violates non-holonomic constraints and equations of motion, leading to control failure under perturbations. 
+
+Crucially, **stability is not a 1-dimensional trajectory; it is an open topological neighborhood (invariant set and basin of attraction)**. In this work, we propose **Model-Driven Diffusion**, decoupling generative control into a **Topological-Metric Duality**:
+1. **Topology by Controller**: A physics-grounded controller defines the contractive vector field over the phase-space neighborhood, guaranteeing structural stability and forward invariance ($\dot{V} \le 0$). When large disturbances occur, the controller ensures the system remains stable—even if dynamically sub-optimal.
+2. **Metric by Demonstrations**: Conditioning on this stable topological manifold, diffusion/flow matching learns the task-specific Riemannian metric, multi-modal paths, timing, and fine-grained execution profiles from offline demonstrations.
+
+We establish a unified vector-field framework comparing: (1) Score-based Diffusion, (2) Conditional Flow Matching, and (3) Model-Driven Neural Flows. Empirical Monte Carlo benchmarks demonstrate that Model-Driven Diffusion achieves high recovery success rates across both nominal regimes and out-of-distribution noise, validating that topological physics must precede metric imitation.
 
 ---
 
@@ -31,14 +37,17 @@ In underactuated systems, statistical mean velocity suffers from a fatal theoret
        ==> Points straight into an underactuated IMPOSSIBLE state!
 ```
 
-To resolve this limitation, we introduce **Optimal Control Velocity Flows (OC-Flow)**. Rather than relying on empirical regression over thousands of offline trajectories, OC-Flow computes the generative restoring vector directly from physical Model Predictive Control (MPC) calculations. 
+To resolve this limitation, we introduce **Model-Driven Diffusion**. Our fundamental premise rests on a core insight from dynamical systems: **Stability is not a 1-dimensional trajectory; it is an open topological neighborhood (invariant basin of attraction)**.
+
+By decoupling policy learning into:
+1. **Topology via Controller**: The controller constructs the global invariant neighborhood $\Omega = \{x \mid V(x) \le c\}$ ensuring contraction ($\dot{V} \le 0$) across the full phase space. When sudden noise hits the system, it may respond with sub-optimal energy, but stability is preserved as a hard invariant.
+2. **Metric via Demonstrations**: Within this topologically stable funnel, diffusion/flow matching learns the task-specific metric—choosing the optimal multi-modal geodesics, timings, and velocities demonstrated by experts.
 
 ### Contributions
-1. **Unified Vector-Field Framework**: We cast Score-Based Diffusion, Conditional Flow Matching, and MPC into a mathematically identical state-space perturbation-recovery pipeline.
-2. **Dynamic Inadmissibility Analysis**: We prove why statistical velocity vectors inevitably violate passive joint dynamic constraints on underactuated systems.
-3. **Comparative Evaluation**: We evaluate all three paradigms on an underactuated double pendulum (single motor control, upright target) across two key metrics:
-   - **Recovery Success Rate (%)** under varying perturbation magnitudes $\sigma$.
-   - **Sample Efficiency** across varying training dataset sizes $N \in [50, 1000]$.
+1. **Topological-Metric Duality**: We propose a principled decoupling between topological invariance (governed by physics and control) and Riemannian metric selection (learned from demonstrations via continuous flows).
+2. **Unified Vector-Field Framework**: We cast Score-Based Diffusion, Conditional Flow Matching, and Model-Driven Neural Flows into a mathematically identical state-space perturbation-recovery pipeline.
+3. **Dynamic Inadmissibility Analysis**: We formalize why empirical statistical vectors violate non-holonomic dynamic constraints on underactuated systems under out-of-distribution noise.
+4. **Empirical Benchmarks**: We benchmark on an underactuated double pendulum across varying dataset sizes $N \in [25, 1000]$ and disturbance noise severities $\sigma \in [0.05, 0.30\text{ rad}]$, demonstrating graceful degradation and stability preservation under severe perturbations.
 
 ---
 
