@@ -1,0 +1,14 @@
+{
+    "Pure_Score_DDPM": {
+        "success": 0,
+        "pole_fall": 100
+    },
+    "Pure_Flow_CFM": {
+        "success": 0,
+        "pole_fall": 98
+    },
+    "Controller_Guided": {
+        "success": 100,
+        "pole_fall": 0
+    }
+}
