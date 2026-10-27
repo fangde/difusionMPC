@@ -330,18 +330,54 @@ Dynamic bipedal walking presents the ultimate stress test for generative policie
 
 ---
 
-## 8. Discussion: Why Policy Still Matters When the Controller Guarantees Stability
+## 8. Discussion: Why Policy is Indispensable — The Three Pillars of Generative Control
 
-A natural question arises: **"If the policy relies on the controller to achieve a 100% success rate, why do we need the generative policy at all? Why not use the controller alone?"**
+A fundamental question arises from our empirical findings: **"If an optimal controller (MPC) already achieves a 100% stability rate, why introduce a neural generative policy at all? Why not deploy pure MPC directly in production?"**
 
-The answer lies in the **hierarchical co-design of modern autonomous systems**, bridging the gap between high-level cognitive versatility and low-level physical safety:
+While classical MPC appears self-sufficient in low-dimensional toy benchmarks, it encounters insurmountable physical, computational, and perceptual barriers when deployed in complex, real-world robotic environments. We formalize the **Three Foundational Pillars** establishing why the Generative Policy is indispensable, while MPC serves as the invariant safety shield:
 
-1. **Computational Latency Reduction (100x Speedup)**:
-   Nonlinear Model Predictive Control (NMPC) requires solving an iterative non-convex optimization (SQP/QP) at every cycle, costing $20\text{--}100\text{ ms}$. This latency causes instability in high-speed maneuvers. By distilling the optimal control vector field into an analytical flow, the policy executes in **$< 1\text{ ms}$ on edge NPUs**, making 1000Hz feedback viable.
-2. **Global Multimodality vs. Local Minima**:
-   Classical MPC operates via local gradient descent and easily gets trapped in local minima (e.g., passing left vs. right of an obstacle). Generative diffusion policies excel at capturing global, multi-modal semantic distributions demonstrated by humans.
-3. **Implications for Vision-Language-Action (VLA) Models**:
-   Modern VLA models (e.g., RT-2, OpenVLA, $\pi_0$) suffer from the exact same dynamic vulnerability in contact-rich tasks (such as peg insertion or wiping) and near kinematic singularities ($J^{-1} \to \infty$). Direct open-loop tokenized action output causes severe actuator overcurrent or surface collisions. Deploying VLA models within our **MPC/Impedance Barrier Guidance framework** allows the large multimodal model to dictate semantic intentions while the physical controller guarantees passive stability and bounded interaction forces.
+### 8.1 Pillar 1: Globality & Long-Horizon Non-Convex Reasoning (Overcoming MPC's Myopia)
+Classical Model Predictive Control is fundamentally **myopic**: it optimizes over a finite horizon $H$ (typically $H \in [10, 30]$ time steps, spanning $0.2\text{--}0.6\text{ s}$):
+$$\min_{\{u_t\}_{t=0}^{H-1}} \sum_{t=0}^{H-1} \ell(x_t, u_t) + V_f(x_H)$$
+Extending $H$ to macroscopic scales ($H = 500$, $10\text{ s}$) causes the non-convex decision space to explode, making online convergence impossible. Consequently, pure MPC suffers from:
+- **Cul-de-sac & Local Minima Trapping**: When confronting non-convex obstacles, local gradient descent cannot leap across barrier bifurcations, frequently oscillating in front of pillars or dead ends.
+- **Multi-Pump Swing-Up Inability**: Under torque saturation $|u| \le u_{max}$, an underactuated arm cannot reach the upright goal directly; it must pump energy backward and forward 3–4 times over multiple seconds. A finite-horizon MPC cannot foresee the delayed global benefit of swinging backward, dithering near the bottom equilibrium.
+
+**The Policy's Global Value**: 
+Trained across the complete state-space manifold $\mathcal{X}$, a neural generative policy acts as a **global telescope**. In $< 1\text{ ms}$, its forward pass evaluates the global vector field $\mathbf{v}(x)$, naturally sampling multi-modal routes (Mode 1: swing left / detour left; Mode 2: swing right / detour right) that bypass local deadlocks.
+
+---
+
+### 8.2 Pillar 2: Microsecond Computational Latency (1ms Feedforward vs. 50ms Iterative Optimization)
+In real-world physical dynamics, **latency is mathematically equivalent to phase lag and negative damping**:
+- Solving a full-body Nonlinear MPC (NMPC) for a 20-DOF humanoid with hybrid contact constraints requires iterative Sequential Quadratic Programming (SQP) or Interior Point methods, consuming **$20\text{--}80\text{ ms}$ with severe non-deterministic jitter**.
+- During a high-speed dynamic tumble or foot slip, a $50\text{ ms}$ delay means the robot's Capture Point has already drifted outside the support polygon ($h = \frac{1}{2} g t^2$). The delayed MPC command arrives too late, exacerbating the fall.
+
+**The Policy's Speed Value**:
+Diffusion and Flow Matching **distill** the intractable global optimization into a **fixed, deterministic feedforward pass** ($y = W_2 \sigma(W_1 x + b_1) + b_2$). Running on edge NPU/TensorRT cores, execution completes in **$< 1\text{ ms}$ (1000 Hz)** with $< 0.05\text{ ms}$ jitter, arresting dynamic perturbations before they amplify into macro instability.
+
+---
+
+### 8.3 Pillar 3: The Multimodal Interface: Direct Bridge to Vision Engines & VLA Foundation Models
+Classical control speaks exclusively in abstract, low-dimensional coordinate vectors: $x = [p, v, \theta, \omega]^T \in \mathbb{R}^n$.
+- In unstructured human environments (kitchens, disaster zones, hospitals), state vectors cannot be directly measured. The robot receives **raw 1080p RGB pixels, point clouds, and language prompts** ("pick up the half-empty cup without spilling").
+- Cascading a separate heuristic perception pipeline (object detection $\to$ 3D pose estimation $\to$ MPC) is notoriously brittle: lighting variations, specular reflections (glass), or partial occlusions yield state estimation jumps (`NaN` or $5\text{ cm}$ false shifts), causing MPC to violently jerk or smash hardware.
+
+**The Policy's Interfacing Value**:
+Generative policies natively speak the tokenized language of modern AI (Vision Transformers, CLIP embeddings, and LLMs). Through cross-attention mechanisms, **a Visuomotor Policy forms a seamless, end-to-end differentiable bridge from raw photons to physical motion flows**. It parses complex semantic scenes that no differential equation can describe (e.g., folding deformable cloth, handling fragile eggs).
+
+---
+
+### 8.4 The Architectural Paradigm: Decoupling Strategic Intelligence and Physical Invariance
+
+| Architectural Dimension | Pure MPC (Classical Control) | Pure Diffusion / VLA (Pure AI) | **Model-Driven MPC-Guided Diffusion (Ours)** |
+| :--- | :--- | :--- | :--- |
+| **1. Horizon & Globality** | **Myopic (Local Minima)**<br>Trapped by finite $H$ ($0.5\text{ s}$). | **Global Intuition**<br>Multimodal long-horizon planning. | **Global Planning + Local Viability**<br>Policy selects global macro route; MPC guards local steps. |
+| **2. Real-time Latency** | **Heavy & Jittery ($20\text{--}80\text{ ms}$)**<br>Cannot close high-speed balance loops. | **Moderate ($10\text{--}30\text{ ms}$)**<br>Vulnerable to high-frequency noise. | **Deterministic ($< 1\text{ ms}$ at 1000 Hz)**<br>Distilled feedforward flow with closed-form barrier filter. |
+| **3. Sensory Interface** | **Blind & Deaf**<br>Requires manual state vectors; fails on pixels. | **Native Multimodal**<br>Ingests RGB images, language, touch. | **Full Multimodal Grounding**<br>Vision/Language drives policy; MPC guarantees physical contact safety. |
+| **4. Physical Safety** | **Hard Invariant ($\dot{V} \le 0$)** | **Zero Guarantees** ($0\%$ survival on walking) | **Hard Invariant Guarantee ($\mathbf{100\%}$ survival)** |
+
+By synthesizing **Globality**, **Computational Latency**, and the **Multimodal Sensory Interface**, our paradigm establishes the definitive template for general-purpose robotic autonomy: **Generative AI provides the cognitive brain; Optimal Control theory provides the indestructible physical cerebellum.**
 
 ---
 
