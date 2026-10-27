@@ -77,6 +77,20 @@ The optimal architecture couples both paradigms via **model-driven invariant pro
 
 ---
 
+### Architectural Schematic & Dynamic Effects
+
+The overall architecture, geometric invariant projection, and empirical performance effects are synthesized in **Figure 1**:
+
+![MPC-Guided Diffusion Architectural Framework and Dynamic Effects](figures/mpc_diffusion_framework_and_effects.png)
+
+> **Figure 1: Architectural Invariant Projection Framework and Dynamic Performance Effects.**  
+> - **(A) Invariant Projection Geometry in Phase Space $(\theta, \omega)$**: The Lyapunov sub-level set $\mathcal{S} = \{x \mid V(x) \le c\}$ defines the contractive basin of attraction. When the generative diffusion policy proposes an unconstrained action $u_{\text{gen}}$ pointing outward ($\dot{V} > -\alpha V$), the closed-form CBF filter projects it orthogonally onto the admissible boundary $\mathcal{U}_{\text{stable}}(x)$, ensuring forward invariance.
+> - **(B) State Trajectory Recovery under Continuous Disturbance ($\sigma = 0.5\,\mathrm{N\cdot m}$)**: Pure CFM exhibits high-frequency sampling jitter and delayed convergence; Deterministic BC suffers from compounding error drift; Pure MPC stabilizes accurately but requires online iterative QP solving; **MPC-Guided Diffusion (Ours)** achieves rapid, smooth, and monotonic recovery to the attractor basin ($|\theta| \le 0.06\,\mathrm{rad}$).
+> - **(C) Exponential Lyapunov Energy Decay $V(x_t)$**: In contrast to Pure CFM which frequently violates the contractive rate $\dot{V} \le -\alpha V$ (orange shaded violation zone, occurring in 20.8% of timesteps), MPC-Guided Diffusion strictly obeys the exponential decay bound $V(0)e^{-\alpha t}$.
+> - **(D) Quantitative Pareto Frontier (Safety Violation vs. Latency)**: Plotting Invariant Violation Rate against Inference Latency per step. Pure MPC achieves 0.0% violations but has high latency ($0.167\,\mathrm{ms}$); Pure CFM runs faster ($0.094\,\mathrm{ms}$) but has 20.8% violations; **Our Flow Matching + CBF occupies the Pareto-optimal frontier** with **0.0% violations** and **$0.099\,\mathrm{ms}$ latency (1.7x faster than MPC)**.
+
+---
+
 ## Module 1: Physical Admissibility and Dynamic Manifolds
 
 ### Theoretical Formulation
@@ -412,6 +426,16 @@ print(f"  • Stitching Result: {'SUCCESS (Stitched complete global path around 
 print("=" * 65)
 ```
 
+### Visual Verification: Trajectory Stitching Across Disjoint Fragments
+
+The empirical trajectory stitching results evaluated on the PyTorch Flow Matching policy are visualized in **Figure 2**:
+
+![Trajectory Stitching Benchmark Visualization](figures/trajectory_stitching_benchmark.png)
+
+> **Figure 2: Real Neural Trajectory Stitching Around a Non-Convex Barrier.**  
+> - *(Left Panel)*: The offline training dataset consists strictly of disconnected local snippets with **zero complete demonstrations** connecting Start $S(-2.5, 0)$ to Goal $G(+2.5, 0)$ around the central obstacle wall.  
+> - *(Right Panel)*: The continuous vector field learned by Flow Matching smoothly glues overlapping local tangent distributions at the apex, generating a smooth, collision-free global path from $S$ to $G$ with 100% success across 100 evaluation trials.
+
 ---
 
 ## Module 5: Dynamic Walking and Exponential Capture Point Divergence
@@ -496,6 +520,16 @@ print(f"  • Model-Guided Steps Survived   : {np.mean(surv_guided):.1f} / 20 st
 print("=" * 65)
 ```
 
+### Visual Verification: Dynamic Walking and Capture Point Stabilization
+
+The empirical LIPM bipedal walking stress test across 100 evaluation episodes is visualized in **Figure 3**:
+
+![Dynamic Bipedal Walking Capture Point Comparison](figures/bipedal_walking_comparison.png)
+
+> **Figure 3: Dynamic Bipedal Walking Capture Point Stress Test.**  
+> - *(Top Panels)*: Capture Point $\xi$ state trajectories. Pure Diffusion (DDPM) and Pure Flow Matching (CFM) suffer from the exponential error factor $e^{\omega T} \approx 4.05\times$ per footstep, causing the capture point to escape the support basin within 1–2 steps.  
+> - *(Right Panel)*: MPC-Guided Diffusion enforces invariant foot placement within the capture basin, achieving **100% stable walking (20.0 / 20 steps survived)** across all 100 test episodes.
+
 ---
 
 ## Module 6: Rigorous Four-Way Empirical Benchmark
@@ -529,6 +563,17 @@ To provide conclusive empirical evidence addressing peer critique, we executed a
 | **Flow Matching + CBF (Ours)** | **100.0 %** | 0.0 % | **0.0 %** | 4.28 | **0.099 ms** |
 
 *(Benchmark run on identical hardware with 100 test episodes, 150 timesteps per episode, process noise $\sigma = 0.5\text{ N}\cdot\text{m}$.)*
+
+### Visual Verification: Four-Way Benchmark Quantitative Comparison
+
+The quantitative comparison across recovery, constraint violations, and computation latency is visualized in **Figure 4**:
+
+![Four-Way Empirical Benchmark Comparison](figures/four_way_benchmark_comparison.png)
+
+> **Figure 4: Four-Way Empirical Benchmark Quantitative Comparison.**  
+> - *(Left)*: Recovery Success Rate (%) across 100 severe disturbance episodes ($\sigma = 0.5\,\mathrm{N\cdot m}$). All controllers achieve macroscopic balance in this baseline inverted pendulum task.  
+> - *(Middle)*: Invariant Constraint Violation Rate (%). Pure Flow Matching incurs a **20.8% violation rate**, whereas our Flow Matching + CBF projection forces violations strictly to **0.0%**, matching Pure MPC.  
+> - *(Right)*: Inference Latency per step (ms). Flow Matching + CBF executes in **0.099 ms**, which is **1.7x faster** than online receding-horizon QP optimization ($0.167\,\mathrm{ms}$).
 
 ---
 
