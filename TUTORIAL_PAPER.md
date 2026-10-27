@@ -1,21 +1,136 @@
+# 基于 MPC 恢复向量场的生成式控制学习
+## Learning a Generative Recovery Field from MPC
+
+### 一、核心思想
+
+我的目标不是让 Policy 学习 MPC 的优化过程，也不是简单模仿 Demo Trajectories，而是**构造一个具有尽可能大吸引域的闭环向量场，再让 Policy 学习这个场，从而获得快速、可靠的全局控制能力。**
+
+MPC 擅长根据当前状态进行局部优化，但在线求解的计算成本较高。Demo 可以提供全局运动结构，却通常只覆盖有限的成功轨迹，对轨迹附近的扰动和未见过的状态缺乏充分的恢复经验。
+
+我的思路是把两者结合起来：用 Demo 提供全局运动结构，用 MPC 在 Demo 周围探索和构造局部恢复向量场，再将两者整合起来，通过神经网络或生成模型学习。最终执行时不再需要反复调用 MPC。
+
+---
+
+### 二、第一步：用 Demo 构造全局运动结构
+
+首先，获得从初始状态到目标的成功示范轨迹：
+$$\tau_{\mathrm{demo}}=\{x_0,x_1,\ldots,x_T\}$$
+
+Demo 的作用不是提供所有可能的运动，而是为系统提供全局引导。
+
+对于复杂的动力学系统，局部 MPC 可能无法从某些初始状态直接到达目标。Demo 则可以提供 MPC 缺乏的长时域运动结构，例如摆起、绕障或需要先积累能量才能完成的动作。
+
+因此，Demo 负责覆盖全局运动，而不要求 MPC 独立解决所有全局规划问题。
+
+---
+
+### 三、第二步：通过扰动和 MPC 扩展可恢复区域
+
+沿着 Demo 的不同状态添加随机扰动：
+$$\tilde x_i=x_i+\epsilon_i$$
+
+对于每个扰动状态，使用动力学模型和 MPC 进行闭环控制，以对应的 Demo 状态或局部轨迹作为恢复目标。
+
+如果系统能够在规定时间内回到目标容差范围，就记录该状态及其对应的局部控制向量：
+$$u_i^*=\operatorname{MPC}(\tilde x_i)$$
+$$v_i^*=f(\tilde x_i,u_i^*)$$
+
+不断改变扰动幅度、方向和发生位置，就能逐渐探索 Demo 周围更大的可恢复区域。
+
+如果扰动过大，MPC 无法恢复，则保留 Demo 作为全局运动引导，不将失败的控制结果作为成功恢复标签。
+
+这里的核心不是要求 MPC 从任意状态完成任务，而是利用 MPC 在其能够恢复的区域内，提供经过闭环验证的局部恢复规律。
+
+---
+
+### 四、第三步：构造全局可恢复向量场
+
+将两类数据整合起来：
+- Demo 提供全局运动结构与跨区域的运动引导。
+- MPC 提供局部状态下的恢复方向，以及相应的闭环恢复验证结果。
+
+由此构造训练数据：
+$$\mathcal D=\mathcal D_{\mathrm{demo}}\cup\mathcal D_{\mathrm{MPC}}$$
+
+目标是形成一个覆盖尽可能大可恢复区域的向量场：
+$$F^*(x)$$
+
+它不仅描述系统在某个状态下应该朝哪个方向运动，还希望在受到扰动后能够把系统引导回成功的运动过程。
+
+严格来说，Demo 本身并不保证闭环稳定性，MPC 在有限个采样状态上的成功也不保证所有状态之间都能恢复。因此，这个场的覆盖范围、恢复能力和区域连通性，都需要通过实验逐步验证。
+
+---
+
+### 五、第四步：训练 Policy 学习整个向量场
+
+训练目标不是复现 MPC 的优化过程，也不是逐点模仿某条固定轨迹，而是学习合成向量场所表达的运动规律：
+$$F_\theta(x)\approx F^*(x)$$
+
+如果直接学习确定性的局部向量，可以先使用普通神经网络回归。
+
+如果同一状态和任务条件下存在多种有效的恢复方向或恢复路径，则可以进一步使用 Flow Matching 或 Diffusion 学习条件分布：
+$$p_\theta(\tau\mid x_0,g)$$
+其中 $x_0$ 是初始状态，$g$ 是任务目标。
+
+生成模型的价值在于表达多种有效运动方式，而不是简单地把不同路径平均成一个可能无法执行的动作。
+
+需要注意，物理闭环向量场与生成过程中的概率速度场并不相同。若使用 Flow Matching 或 Diffusion，需要明确生成变量、概率路径和物理状态之间的映射，并验证最终执行的策略是否保留恢复能力。
+
+---
+
+### 六、第五步：独立执行与验证
+
+训练完成后，不再在线调用 MPC，由 Policy 直接执行控制。
+
+实验从未参与训练的初始状态开始，并施加不同大小和方向的扰动，评价：
+- 任务完成率。
+- 从扰动状态恢复的成功率。
+- 可恢复初始状态的覆盖范围。
+- 恢复时间与轨迹误差。
+- 控制能耗。
+- 推理延迟。
+- 相比 Demo-only Policy 和 MPC 的性能差异。
+
+最终目标是让 Policy 以远低于在线 MPC 优化的计算成本，保留尽可能多的全局运动能力与局部恢复能力。
+
+---
+
+### 七、方法总结与实测流水线
+
+整个方法可以概括为：
+
+$$\boxed{
+\begin{aligned}
+&\text{Dynamics Model}+\text{Demonstrations}\\
+&\quad\downarrow\\
+&\text{Perturbation Sampling}+\text{MPC Recovery}\\
+&\quad\downarrow\\
+&\text{Global Motion Structure}\\
+&\quad+\text{Local Recovery Vector Field}\\
+&\quad\downarrow\\
+&\text{Policy / Generative Model Training}\\
+&\quad\downarrow\\
+&\text{Fast Closed-loop Execution}
+\end{aligned}
+}$$
+
+![Demo and MPC Synergy Pipeline](figures/demo_plus_mpc_synergy_pipeline.png)
+
+> **Figure 0: The Complete 5-Step Synergy Pipeline (Demo Spine + MPC Perturbation Funnel $\to$ Fast Execution).**  
+> - **(A) 数据集构造**: 红线为 Demo 提供的全局运动骨架 ($\mathcal{D}_{\mathrm{demo}}$)；青色散点为围绕 Demo 施加状态扰动经 MPC 闭环验证后的局部恢复漏斗 ($\mathcal{D}_{\mathrm{MPC}}$)。  
+> - **(B) 扰动恢复对比**: Demo-only Policy 在遭遇脱离示教轨迹的扰动时迅速失稳跌倒；在线 MPC 虽能恢复但受限于 $0.179\,\mathrm{ms}$ 的高延迟；**Recovery Field Policy (Ours)** 沿学习到的恢复场平滑收缩回目标，耗时仅 $0.106\,\mathrm{ms}$。  
+> - **(C) 性能权衡柱状图**: 验证了本方法在保留 MPC 100% 恢复成功率的同时，执行速度大幅提升近 2 倍。
+
+**核心研究假设：通过 Demo 提供全局运动结构，通过 MPC 扩展局部恢复经验，可以构造一个覆盖更大可恢复区域的向量场；学习这个场的 Policy，有望在不进行在线 MPC 优化的情况下，实现快速且具有扰动恢复能力的控制。**
+
+这套方法的关键不在于让生成模型模仿 MPC，而在于把 MPC 当作构造局部恢复规律的工具，再将这些规律与全局示范整合起来，学习一个能够独立执行的控制策略。
+
+---
+
 # Model-Driven Diffusion and Optimal Control: A Hands-On Tutorial and Theoretical Guide
 
 **A Unified Framework from Dynamic Invariance to Generative Flow Policies**  
 *Why Physical Dynamics and Generative AI Must Co-Design*
-
----
-
-> ### 核心思想宣言：基于局部 MPC 向量场的生成式控制学习
->
-> 这一方法的核心思想**不是让神经网络学习 MPC 的优化过程，也不是模仿 MPC 生成的完整轨迹，而是学习 MPC 在状态空间中构造的闭环向量场**。
->
-> 1. **确定目标与扰动采样**：首先确定动力学系统和目标状态 $x^*$。从目标状态出发，加入不同幅度的随机噪声，相当于对系统施加扰动，得到大量不同的初始状态 $x_i = x^* + \epsilon_i$。
-> 2. **局部 MPC 反馈验证**：对于每一个扰动状态，使用 MPC 计算当前应该采取的局部控制动作 $u_i = \operatorname{MPC}(x_i)$。如果系统沿闭环运动能够回到目标，就确认该状态具有恢复能力，并记录其物理向量 $v_i = f(x_i, u_i)$。通过持续扰动、恢复与采样，构造出一个覆盖广大相空间的局部恢复向量场数据集 $\mathcal{D} = \{(x_i, v_i)\}$。
-> 3. **生成式向量场整合**：接下来，使用 Diffusion 或 Flow Matching 学习这个向量场及其诱导的状态概率演化。
-> 4. **闭环连续积分推理**：推理时，从任意位于可恢复区域内的初始状态 $x_0$ 出发，沿学习得到的向量场连续积分 $\frac{dx}{dt} = F_\theta(x)$，生成一条通向目标的平滑轨迹。由于学习对象来自经过实际物理恢复验证的 MPC 向量场，生成轨迹能够直接继承其恢复能力，而不必在执行过程中反复求解沉重的在线 MPC。
->
-> **核心命题**：  
-> **这一方法的核心不是学习最优轨迹，而是先利用 MPC 构造一个具有恢复能力的向量场，再利用生成式学习把大量局部恢复规律整合成一个快速、连续、可泛化的控制模型。** 最终通过实验验证，它能否从未见过的初始状态可靠地返回目标，以及生成式学习是否比直接向量场回归具有更好的泛化能力。
 
 ---
 
