@@ -535,6 +535,48 @@
             </div>
         </section>
 
+        <!-- The Three Pillars: Why Policy + MPC is the Future -->
+        <section>
+            <h2>🏛️ Architectural Synthesis: The Three Pillars of Generative Policy vs. MPC</h2>
+            <p><strong>The Core Paradox Resolved</strong>: <em>"If MPC guarantees 100% stability, why do we need the Policy at all?"</em> While MPC appears self-sufficient on clean toy equations, it hits hard boundaries in unstructured real-world environments. The Generative Policy provides three irreplaceable superpowers:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Architectural Dimension</th>
+                        <th>Pure MPC (Classical Control)</th>
+                        <th>Pure Diffusion / VLA (Pure AI)</th>
+                        <th>Model-Driven MPC-Guided Diffusion (Ours)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Horizon & Globality</strong></td>
+                        <td><strong>Myopic (Local Minima Trapped)</strong><br>Finite horizon $H \approx 0.5\text{s}$; deadlocks in front of non-convex obstacles; cannot plan multi-pump swings.</td>
+                        <td><strong>Global Intuition</strong><br>Multimodal long-horizon planning learned across full state space.</td>
+                        <td class="highlight"><strong>Global Vision + Local Invariance</strong><br>Policy selects global macro trajectory; MPC guards microsecond step stability.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Computation Speed</strong></td>
+                        <td><strong>Heavy & Jittery ($20\text{--}80\text{ms}$)</strong><br>Iterative SQP non-convex solving; cannot close high-speed 1000Hz contact balance loops.</td>
+                        <td><strong>Moderate ($10\text{--}30\text{ms}$)</strong><br>Vulnerable to high-frequency noise & delay drift.</td>
+                        <td class="highlight"><strong>Ultra-Fast Deterministic ($< 1\text{ms}$ at 1000Hz)</strong><br>Distilled feedforward flow network with closed-form capture barrier filter.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Multimodal Interface</strong></td>
+                        <td><strong>Blind & Deaf</strong><br>Can only ingest abstract state numbers; fails when lighting changes or objects deform.</td>
+                        <td><strong>Native Multimodal Hub</strong><br>Directly takes raw camera RGB pixels, tactile shear, and natural language.</td>
+                        <td class="highlight"><strong>Full Multimodal Grounding</strong><br>Vision/Language drives behavioral intentions; MPC guarantees contact physics & non-crush safety.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout" style="background: #f0fdf4; border-color: #86efac; color: #166534;">
+                <strong>The Ultimate Design Principle:</strong>
+                <p>Generative AI provides the <strong>cognitive brain</strong> (Globality, Long-Horizon Reasoning, Multimodal Vision); Optimal Control Theory provides the <strong>indestructible physical cerebellum</strong> (Lyapunov Invariance, Stability Funnel, Contact Safety).</p>
+            </div>
+        </section>
+
         <!-- System Dynamics & Mathematics -->
         <section>
             <h2>⚙️ Mathematical Formulation</h2>
