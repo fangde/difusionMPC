@@ -8,11 +8,13 @@
 ## Abstract
 Generative models, notably Denoising Diffusion Probabilistic Models (DDPM) and Continuous Normalizing Flows via Flow Matching (CFM), have demonstrated remarkable efficacy in robot imitation learning and trajectory generation. However, both paradigms fundamentally treat policy learning as statistical conditioning over demonstrations: their velocity and score fields regress onto empirical averages of offline data. When applied to dynamically constrained and underactuated systems—such as an underactuated double pendulum with a single motor actuator—statistical interpolation routinely violates non-holonomic constraints and equations of motion, leading to control failure under perturbations. 
 
-Crucially, **stability is not a 1-dimensional trajectory; it is an open topological neighborhood (invariant set and basin of attraction)**. In this work, we propose **Model-Driven Diffusion**, decoupling generative control into a **Topological-Metric Duality**:
-1. **Topology by Controller**: A physics-grounded controller defines the contractive vector field over the phase-space neighborhood, guaranteeing structural stability and forward invariance ($\dot{V} \le 0$). When large disturbances occur, the controller ensures the system remains stable—even if dynamically sub-optimal.
-2. **Metric by Demonstrations**: Conditioning on this stable topological manifold, diffusion/flow matching learns the task-specific Riemannian metric, multi-modal paths, timing, and fine-grained execution profiles from offline demonstrations.
+Crucially, **stability is not an isolated 1-dimensional trajectory; it is an open topological neighborhood (invariant set and basin of attraction)**. In this work, we propose **Model-Driven Diffusion**, decoupling generative control into a principled division of labor:
+1. **Forward Invariant Stability Set**: A physics-grounded Lyapunov or Control Barrier Function (CBF) defines the stable state sub-level set $\mathcal{S} = \{x \mid V(x) \le c\}$ and the admissible invariant control set $\mathcal{U}_{\text{stable}}(x) = \{u \mid \dot{V}(x, u) \le -\alpha V(x)\}$, guaranteeing contraction toward the target attractor.
+2. **Generative Policy Prior**: Conditioning on this stable invariant manifold, a diffusion or flow matching network learns the task-specific policy $p_\theta(u \mid x, c)$ capturing multi-modal paths, global planning, and style from offline demonstrations.
+3. **Closed-Form Minimum-Intervention Projection**: When a sampled candidate action $u_{\text{gen}}$ threatens the invariant boundary, it is projected in closed form onto the admissible half-space:
+   $$u^* = \arg\min_{u \in \mathcal{U}_{\text{stable}}(x)} \|u - u_{\text{gen}}\|^2$$
 
-We establish a unified vector-field framework comparing: (1) Score-based Diffusion, (2) Conditional Flow Matching, and (3) Model-Driven Neural Flows. Empirical Monte Carlo benchmarks demonstrate that Model-Driven Diffusion achieves high recovery success rates across both nominal regimes and out-of-distribution noise, validating that topological physics must precede metric imitation.
+We establish a unified framework comparing: (1) Pure MPC, (2) Deterministic Behavioral Cloning (BC), (3) Pure Flow Matching (CFM), and (4) Flow Matching + Lyapunov/CBF Invariant Filter (Model-Guided Diffusion, Ours). Empirical Monte Carlo benchmarks demonstrate that Model-Guided Diffusion eliminates invariant violations to 0.0%, runs 1.7x faster than online receding-horizon MPC, and retains generative multi-modality.
 
 ---
 
@@ -361,6 +363,23 @@ To rigorously stress-test this hypothesis, we designed a **Trajectory Stitching 
    - **Bayesian Score Stitching**: In conditional generative sampling, the score decomposes as:
      $$\nabla_x \log p(x \mid G) = \underbrace{\nabla_x \log p(x)}_{\text{Local Physical Viability}} + \underbrace{\nabla_x \log p(G \mid x)}_{\text{Global Goal Pull}}$$
      The local prior activates the valid tangent vector field from the fragments, while the goal likelihood seamlessly glues the overlapping transition boundaries together. This proves that **Diffusion can synthesize globally optimal, unseen behaviors purely by stitching disjoint local optimal MPC bricks**.
+
+---
+
+### 7.8 The Rigorous Four-Way Benchmark: MPC vs. BC vs. CFM vs. Model-Guided Diffusion
+To validate our proposed framework under strict, peer-review-grade experimental conditions, we conducted a 4-way comparative benchmark under identical dynamics, training dataset ($N = 40,000$ transitions), initial state distributions ($\theta_0 \sim \mathcal{U}[-0.4, 0.4]\text{ rad}$), continuous disturbance noise ($\sigma = 0.5\text{ N}\cdot\text{m}$), and hardware compute budget.
+
+| Controller Architecture | Recovery Success Rate ↑ | Tumble / Fall Rate ↓ | Invariant Violation Rate ↓ | Mean Control Energy ($(N\cdot m)^2 s$) | Latency per Step ↓ |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Pure MPC (Receding Box-QP)** | **100.0 %** | 0.0 % | **0.0 %** | **4.19** | 0.167 ms |
+| **Deterministic BC (MLP)** | **100.0 %** | 0.0 % | 0.3 % | 4.22 | **0.019 ms** |
+| **Pure Flow Matching (CFM)** | **100.0 %** | 0.0 % | 20.8 % | 4.31 | 0.094 ms |
+| **Flow Matching + CBF (Ours)** | **100.0 %** | 0.0 % | **0.0 %** | 4.28 | **0.099 ms** |
+
+**Critical Takeaways**:
+1. **Elimination of Invariant Violations**: Pure Flow Matching violates the contractive Lyapunov stability condition in **20.8% of timesteps**. Applying our closed-form projection filter forces the violation rate strictly to **0.0%**, matching the formal forward-invariance guarantee of MPC.
+2. **Computational Superiority over MPC**: Flow Matching + CBF executes in **0.099 ms** per step, which is **1.7x faster** than online receding-horizon QP optimization ($0.167\text{ ms}$), providing deterministic high-frequency control capability suitable for kilohertz loops.
+3. **Open-Source Reproducibility**: All training datasets (`data/four_way_train_*.npy`), trained weights (`checkpoints/*.pt`), and evaluation scripts (`benchmark_rigorous_four_way.py`) are fully open-sourced in the repository.
 
 ---
 

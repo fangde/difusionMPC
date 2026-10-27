@@ -1,0 +1,30 @@
+{
+  "Pure MPC (Receding Horizon Box-QP)": {
+    "recovery_success_rate": 100.0,
+    "tumble_rate": 0.0,
+    "constraint_violation_rate": 0.0,
+    "avg_control_energy": 4.193982030110817,
+    "latency_ms": 0.167463178288502
+  },
+  "Deterministic BC (MLP)": {
+    "recovery_success_rate": 100.0,
+    "tumble_rate": 0.0,
+    "constraint_violation_rate": 0.31333333333333335,
+    "avg_control_energy": 4.218069451334473,
+    "latency_ms": 0.01883646388693402
+  },
+  "Pure Flow Matching (CFM)": {
+    "recovery_success_rate": 100.0,
+    "tumble_rate": 0.0,
+    "constraint_violation_rate": 20.82,
+    "avg_control_energy": 4.309518028121098,
+    "latency_ms": 0.09429932121420279
+  },
+  "Flow Matching + Lyapunov/CBF (Ours)": {
+    "recovery_success_rate": 100.0,
+    "tumble_rate": 0.0,
+    "constraint_violation_rate": 0.0,
+    "avg_control_energy": 4.278420927151559,
+    "latency_ms": 0.09873593848897144
+  }
+}
