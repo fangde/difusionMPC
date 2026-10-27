@@ -1,0 +1,18 @@
+{
+    "Pure_Diffusion_DDPM": {
+        "success": 0,
+        "avg_steps": 133.0
+    },
+    "Pure_Flow_CFM": {
+        "success": 0,
+        "avg_steps": 149.0
+    },
+    "Pure_MPC_Controller": {
+        "success": 100,
+        "avg_steps": 2000.0
+    },
+    "MPC_Guided_Diffusion": {
+        "success": 100,
+        "avg_steps": 2000.0
+    }
+}
