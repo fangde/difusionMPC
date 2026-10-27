@@ -357,6 +357,18 @@
         </div>
 
         <!-- Abstract -->
+        <!-- Methodology Manifesto -->
+        <section>
+            <h2>💡 Core Methodology: Learning Closed-Loop Vector Fields from Local MPC Feedback</h2>
+            <div class="callout" style="background: #f8fafc; border-left: 5px solid #0284c7; padding: 20px; font-size: 15px; line-height: 1.8;">
+                <p style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 10px;">基于局部 MPC 向量场的生成式控制学习</p>
+                <p>我的想法不是让神经网络学习 MPC 的优化过程，也不是模仿 MPC 生成的完整轨迹，而是<strong>学习 MPC 在状态空间中构造的闭环向量场</strong>。</p>
+                <p style="margin-top: 8px;">首先确定动力学系统和目标状态。从目标状态出发，加入不同幅度的随机噪声，相当于对系统施加扰动，得到大量不同的初始状态。对于每一个扰动状态，使用 MPC 进行闭环控制。如果系统能够回到目标，就认为这个初始状态具有恢复能力，并记录 MPC 在该状态下给出的局部控制向量。这样，通过不断扰动、恢复和采样，就可以逐渐构造一个覆盖较大状态空间的稳定恢复向量场。</p>
+                <p style="margin-top: 8px;">接下来，使用 Diffusion 或 Flow Matching 的方法学习这个向量场及其诱导的状态演化。推理时，从任意一个位于已学习恢复区域内的初始状态出发，沿学习得到的向量场积分，生成一条通向目标的连续轨迹。由于学习对象来自经过实际闭环恢复验证的 MPC 向量场，我们希望生成轨迹也能够继承其恢复能力，而不必在执行过程中反复求解 MPC。</p>
+                <p style="margin-top: 10px; font-weight: 600; color: #0369a1;">核心命题：这一方法的核心不是学习最优轨迹，而是先利用 MPC 构造一个具有恢复能力的向量场，再利用生成式学习把大量局部恢复规律整合成一个快速、连续、可泛化的控制模型。</p>
+            </div>
+        </section>
+
         <section>
             <h2>📖 Abstract & Core Thesis</h2>
             <div class="abstract-box">

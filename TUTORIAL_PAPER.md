@@ -5,6 +5,20 @@
 
 ---
 
+> ### 核心思想宣言：基于局部 MPC 向量场的生成式控制学习
+>
+> 这一方法的核心思想**不是让神经网络学习 MPC 的优化过程，也不是模仿 MPC 生成的完整轨迹，而是学习 MPC 在状态空间中构造的闭环向量场**。
+>
+> 1. **确定目标与扰动采样**：首先确定动力学系统和目标状态 $x^*$。从目标状态出发，加入不同幅度的随机噪声，相当于对系统施加扰动，得到大量不同的初始状态 $x_i = x^* + \epsilon_i$。
+> 2. **局部 MPC 反馈验证**：对于每一个扰动状态，使用 MPC 计算当前应该采取的局部控制动作 $u_i = \operatorname{MPC}(x_i)$。如果系统沿闭环运动能够回到目标，就确认该状态具有恢复能力，并记录其物理向量 $v_i = f(x_i, u_i)$。通过持续扰动、恢复与采样，构造出一个覆盖广大相空间的局部恢复向量场数据集 $\mathcal{D} = \{(x_i, v_i)\}$。
+> 3. **生成式向量场整合**：接下来，使用 Diffusion 或 Flow Matching 学习这个向量场及其诱导的状态概率演化。
+> 4. **闭环连续积分推理**：推理时，从任意位于可恢复区域内的初始状态 $x_0$ 出发，沿学习得到的向量场连续积分 $\frac{dx}{dt} = F_\theta(x)$，生成一条通向目标的平滑轨迹。由于学习对象来自经过实际物理恢复验证的 MPC 向量场，生成轨迹能够直接继承其恢复能力，而不必在执行过程中反复求解沉重的在线 MPC。
+>
+> **核心命题**：  
+> **这一方法的核心不是学习最优轨迹，而是先利用 MPC 构造一个具有恢复能力的向量场，再利用生成式学习把大量局部恢复规律整合成一个快速、连续、可泛化的控制模型。** 最终通过实验验证，它能否从未见过的初始状态可靠地返回目标，以及生成式学习是否比直接向量场回归具有更好的泛化能力。
+
+---
+
 ## Abstract
 
 Recent advances in robot learning have established Diffusion Policies and Flow Matching as powerful paradigms for imitation learning, capable of capturing multi-modal behaviors and ingesting high-dimensional sensory inputs. However, unconstrained generative policies lack formal physical invariance guarantees: high-frequency sampling jitter, out-of-distribution drift, and compounding errors routinely destabilize underactuated or safety-critical dynamic systems. Conversely, Model Predictive Control (MPC) and Control Barrier Functions (CBFs) enforce rigorous dynamic feasibility and Lyapunov stability, but remain computationally expensive for real-time high-rate execution and struggle with non-convex, long-horizon trajectory synthesis.

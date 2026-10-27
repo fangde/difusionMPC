@@ -5,6 +5,21 @@
 
 ---
 
+> ### Executive Manifesto: Generative Control Learning via Local MPC Vector Fields  
+> **（基于局部 MPC 向量场的生成式控制学习）**
+>
+> The fundamental premise of this work is **not to force a neural network to learn the iterative MPC optimization algorithm (solving non-convex QPs online), nor to imitate pre-recorded end-to-end trajectories, but to learn the closed-loop recovery vector field constructed by MPC across state-space perturbations**:
+>
+> 1. **Perturbation-Based State Exploration**: Starting from the target equilibrium $x^*$, we inject stochastic disturbances of varying magnitudes to sample a wide distribution of initial states $x_i = x^* + \epsilon_i$.
+> 2. **Local Physical Vector Supervision**: For each perturbation, local receding-horizon MPC computes the instantaneous recovery control $u_i^* = \operatorname{MPC}(x_i)$. When repeated feedback returns to the goal, the empirical physical velocity vector $v_i = f(x_i, u_i^*)$ is recorded into a scattered dataset $\mathcal{D} = \{(x_i, v_i)\}_{i=1}^N$ **without storing complete long trajectories**.
+> 3. **Generative Continuous Flow Learning**: We train Diffusion and Flow Matching models to learn the probability vector field and state evolution induced by this recovery field.
+> 4. **Microsecond Closed-Loop Integration**: During online deployment, the system continuously integrates along the learned field $\frac{dx}{dt} = F_\theta(x)$ at $1000\,\mathrm{Hz}$ ($< 0.1\,\mathrm{ms}$), inheriting the empirical recovery capability of MPC without incurring any iterative optimization latency.
+>
+> **The Central Thesis**:  
+> *The essence of this methodology is not trajectory imitation, but experimentally constructing an empirical recovery vector field via local MPC, and using generative flow matching to synthesize scattered local recovery laws into a fast, continuous, and generalizable control model.*
+
+---
+
 ## Abstract
 Generative models, notably Denoising Diffusion Probabilistic Models (DDPM) and Continuous Normalizing Flows via Flow Matching (CFM), have demonstrated remarkable efficacy in robot imitation learning and trajectory generation. However, both paradigms fundamentally treat policy learning as statistical conditioning over demonstrations: their velocity and score fields regress onto empirical averages of offline data. When applied to dynamically constrained and underactuated systems—such as an underactuated double pendulum with a single motor actuator—statistical interpolation routinely violates non-holonomic constraints and equations of motion, leading to control failure under perturbations. 
 
