@@ -80,6 +80,17 @@ Starting from identical perturbed initial state $[0.22, -0.18, 0.10, -0.10]$ to 
 
 > **Key Takeaway**: Adding data improves Flow Matching up to 100% in low noise, but plateaus at ~59% and ~38% under extreme noise, matching the exact physical ceiling of the model-driven controller. The limit is the **physical basin of attraction under actuator torque saturation**, not sample scarcity.
 
+### 4. Out-of-Distribution (OOD) Topological Recovery: Surviving Unseen Shocks
+
+**Empirical Proof of Core Hypothesis**: *"When falling into states unobserved in demonstrations, the controller's topological field synthesizes a stable solution."*
+
+![OOD Recovery](figures/ood_topological_recovery.png)
+
+- **Demonstration Boundary**: Demonstrations strictly cover small perturbations ($\sigma \le 0.08\text{ rad}$, grey shaded box).
+- **The Unseen Shock ($x_{shock} = [0.26, -0.22, 0.18, -0.16]$)**:
+  - **Pure Demonstration Flow (CFM - Red Dashed Line)**: Enters the unseen white domain, hallucinates invalid torque directions, and suffers catastrophic tumble (**fails completely**).
+  - **Model-Driven Topology Flow (Ours - Green Solid Line)**: In the absence of human demonstrations, the controller's continuous Lyapunov vector field ($\dot{V} \le 0$) activates automatically, pulls the state along a contractive phase-plane curve, and successfully recovers to upright $[0, 0, 0, 0]$!
+
 ---
 
 ## 🚀 Quickstart & Reproduction

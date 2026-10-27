@@ -1,0 +1,7 @@
+{
+    "N_test": 100,
+    "pure_cfm_success_rate": 37.0,
+    "model_driven_success_rate": 48.0,
+    "demo_max_theta1": 0.1,
+    "shock_theta1": 0.26
+}
