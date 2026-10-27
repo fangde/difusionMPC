@@ -1,0 +1,33 @@
+{
+  "overall_success_rate": {
+    "MPC": 100,
+    "BC": 100,
+    "CFM": 100
+  },
+  "regime_success_rates": {
+    "Small (|theta| <= 0.25 rad)": {
+      "MPC": 100.0,
+      "BC": 100.0,
+      "CFM": 100.0
+    },
+    "Medium (|theta| in [0.25, 0.45] rad)": {
+      "MPC": 100.0,
+      "BC": 100.0,
+      "CFM": 100.0
+    },
+    "Large Unseen (|theta| in [0.45, 0.65] rad)": {
+      "MPC": 100.0,
+      "BC": 100.0,
+      "CFM": 100.0
+    }
+  },
+  "latencies_ms": {
+    "MPC": 0.19390887305295715,
+    "BC": 0.020370570876790832,
+    "CFM": 0.10363845678900058
+  },
+  "speedup": {
+    "BC_vs_MPC": 9.519069162361415,
+    "CFM_vs_MPC": 1.8710127404515464
+  }
+}
