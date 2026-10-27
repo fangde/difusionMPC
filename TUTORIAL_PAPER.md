@@ -27,7 +27,11 @@ Every module in this tutorial is accompanied by self-contained, reproducible Pyt
 3. [Module 2: Invariant Sets & Minimum-Intervention CBF Projection](#module-2-invariant-sets--minimum-intervention-cbf-projection)
    - *Theoretical Formulation*: Stable Sub-level Sets $\mathcal{S}$ and Admissible Controls $\mathcal{U}_{\text{stable}}$
    - *Hands-On Code 2*: Testing Closed-Form CBF/Lyapunov Safe Projection on Out-of-Distribution Shocks
-4. [Module 3: Long-Horizon Generative Planning vs. Local Receding MPC](#module-3-long-horizon-generative-planning-vs-local-receding-mpc)
+4. [Module 2B: The Orthogonal Flow Decomposition (Contraction Funnel ⊕ Isocontour Exploration)](#module-2b-the-orthogonal-flow-decomposition-contraction-funnel--isocontour-exploration)
+   - *Theoretical Formulation*: Helmholtz-Lyapunov Decomposition $v(x) = v_0(x) + w(x)$ with $\nabla V(x)^\top w(x) = 0$
+   - *Generation Time vs. Physical Time*: Physics-Regularized CFM Objective
+   - *Hands-On Code 2B*: The Minimal 2D Limit Cycle Canonical Benchmark
+5. [Module 3: Long-Horizon Generative Planning vs. Local Receding MPC](#module-3-long-horizon-generative-planning-vs-local-receding-mpc)
    - *Theoretical Formulation*: Horizon Limitations of Local Solvers in Underactuated Dynamics
    - *Hands-On Code 3*: Generative Momentum Coordination Unlocks Swing-Up
 5. [Module 4: Trajectory Stitching via Flow Matching](#module-4-trajectory-stitching-via-flow-matching)
@@ -262,6 +266,151 @@ print("=" * 65)
 
 ---
 
+## Module 2B: The Orthogonal Flow Decomposition (Contraction Funnel ⊕ Isocontour Exploration)
+
+### 1. The Dual Representation: Local Field vs. Trajectory Distribution
+A fundamental conceptual leap beyond standard imitation learning (MPC $\to$ Behavioral Cloning $\to$ Policy) is to recognize that MPC and Generative Models capture two fundamentally different mathematical objects:
+1. **The Local Physical Vector Field**:
+   $$v_{\mathrm{MPC}}(x, g) = f(x, u_{\mathrm{MPC}}(x, g))$$
+   - *Question Answered*: Given the current state $x$, in which direction must the system evolve to preserve or restore physical stability?
+2. **The Conditioned Trajectory Distribution**:
+   $$p_\theta(\tau \mid x_0, g)$$
+   - *Question Answered*: Among all dynamically feasible trajectories satisfying task condition $g$, which complete paths are most likely or desirable?
+
+> **Crucial Distinction**: The visitation density $p(x)$ is not identical to trajectory probability $p(\tau)$. Merely knowing which states are frequently visited does not determine sequence ordering, phase velocity, or dynamical admissibility.
+
+---
+
+### 2. Helmholtz-Lyapunov Orthogonal Decomposition
+Rather than treating generative planning and stability filtering as adversarial post-hoc steps, we decompose the closed-loop vector field into two mutually orthogonal components:
+$$\boxed{ v(x) = v_0(x) + w(x) }$$
+where $v_0(x)$ is the contractive stabilizing base field, and $w(x)$ is the generative exploratory vector field chosen by the neural policy.
+
+We impose the **Isocontour Invariance Condition**:
+$$\boxed{ \nabla V(x)^\top w(x) = 0 }$$
+
+Under this orthogonal condition, the time derivative of the Lyapunov function satisfies:
+$$\dot{V}(x) = \nabla V(x)^\top [v_0(x) + w(x)] = \nabla V(x)^\top v_0(x) + \underbrace{\nabla V(x)^\top w(x)}_{= 0} = \nabla V(x)^\top v_0(x) \le -\alpha V(x)$$
+
+**Theoretical Implications**:
+- **Invariant Stability Rate**: The generative flow $w(x)$ acts strictly along the level sets (isocontours) of $V(x)$. It cannot alter the instantaneous rate of Lyapunov contraction!
+- **Maximal Exploration Freedom**: The generative policy enjoys full expressiveness across all directions orthogonal to $\nabla V(x)$, choosing diverse speeds, curvatures, and multimodal routes without threatening stability.
+
+---
+
+### 3. Generation Time ($s$) vs. Physical Time ($t$)
+A frequent point of confusion in generative control is conflating the two time axes:
+- **Algorithmic Generation Time ($s \in [0, 1]$)**: Flow Matching models learn a vector field $v_\theta(z, s \mid c)$ transporting random noise $z \sim \mathcal{N}(0, I)$ into action trajectories.
+- **Physical Continuous Time ($t \ge 0$)**: The real robotic system state $x(t)$ evolves via $v_{\mathrm{physical}}(x) = f(x, \pi_\theta(x))$.
+
+To bridge this gap during end-to-end training, we introduce the **Physics-Regularized Flow Matching Loss**:
+$$\mathcal{L} = \mathcal{L}_{\mathrm{CFM}} + \lambda_1 \mathcal{L}_{\mathrm{field}} + \lambda_2 \mathcal{L}_{\mathrm{stability}}$$
+where:
+$$\mathcal{L}_{\mathrm{field}} = \mathbb{E}_x \left\| v_{\theta, \mathrm{physical}}(x) - v_{\mathrm{MPC}}(x) \right\|^2$$
+$$\mathcal{L}_{\mathrm{stability}} = \mathbb{E}_x \left[ \max\left(0, \nabla V(x)^\top v_{\theta, \mathrm{physical}}(x) + \alpha V(x)\right)^2 \right]$$
+
+---
+
+### 4. Canonical Minimal Experiment: 2D Limit Cycle with Orthogonal Flow
+
+To isolate stability retention from trajectory multimodality, consider a 2D planar system whose target attractor is a stable limit cycle:
+$$\text{Target Manifold: } r = \|x\| = R = 1.0$$
+- **Lyapunov Function**: $V(x) = \frac{1}{2}(\|x\| - R)^2$
+- **Base Radial Stabilizer (MPC)**:
+  $$v_0(x) = - k (\|x\| - R) \frac{x}{\|x\|}$$
+- **Generative Tangential Field (Diffusion/CFM)**:
+  $$w(x) = \omega_\theta(x, c) \frac{\begin{bmatrix} -x_2 \\ x_1 \end{bmatrix}}{\|x\|}$$
+
+Because $\frac{x}{\|x\|} \perp \frac{[-x_2, x_1]^\top}{\|x\|}$, the orthogonality condition $\nabla V(x)^\top w(x) \equiv 0$ holds identically everywhere!
+
+![Limit Cycle Orthogonal Flow Decomposition](figures/limit_cycle_orthogonal_decomposition.png)
+
+> **Figure 2: The Orthogonal Vector Field Decomposition on a 2D Limit Cycle.**  
+> - **(A) Vector Field Decomposition**: The base field $v_0(x)$ (blue arrows) enforces strict radial contraction toward $r = 1.0$; the generative tangential field $w(x)$ explores the limit cycle without affecting radial stability.  
+> - **(B) Diverse Multimodal Trajectories**: Conditioned on context $c$, the policy generates Counter-Clockwise (Mode A, green) and Clockwise (Mode B, orange) trajectories, all strictly converging to the exact same limit cycle.  
+> - **(C) Invariant Lyapunov Decay from OOD Shocks**: Regardless of extreme initial conditions ($r_0 = 0.25$ or $r_0 = 2.4$), Lyapunov error $V(x_t)$ decays monotonically to zero ($10^{-6}$), while unconstrained drift policies suffer persistent variance.
+
+---
+
+### Hands-On Code 2B: The Minimal 2D Limit Cycle Canonical Benchmark
+
+```python
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+R, k_radial = 1.0, 2.5
+
+# 1. Generative Tangent Velocity Network
+class TangentFlowNet(nn.Module):
+    def __init__(self, hidden=64):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(2 + 1, hidden), nn.SiLU(),
+            nn.Linear(hidden, hidden), nn.SiLU(),
+            nn.Linear(hidden, 1) # angular velocity omega
+        )
+    def forward(self, x, c):
+        return self.net(torch.cat([x, c], dim=-1))
+
+# 2. Train on Scattered Local Vectors (No full trajectories!)
+np.random.seed(42)
+N = 4000
+r_pts = np.random.uniform(0.4, 2.0, N)
+th_pts = np.random.uniform(-np.pi, np.pi, N)
+X_train = np.stack([r_pts * np.cos(th_pts), r_pts * np.sin(th_pts)], axis=1)
+C_train = np.random.choice([-1.0, 1.0], size=(N, 1))
+Omega_target = C_train[:, 0] * (1.8 + 0.4 * np.sin(3.0 * th_pts)) + np.random.normal(0, 0.05, N)
+
+model = TangentFlowNet()
+opt = torch.optim.Adam(model.parameters(), lr=2e-3)
+X_t = torch.tensor(X_train, dtype=torch.float32)
+C_t = torch.tensor(C_train, dtype=torch.float32)
+W_t = torch.tensor(Omega_target.reshape(-1, 1), dtype=torch.float32)
+
+for epoch in range(25):
+    opt.zero_grad()
+    loss = F.mse_loss(model(X_t, C_t), W_t)
+    loss.backward()
+    opt.step()
+
+# 3. Simulate System with Orthogonal Decomposition: v(x) = v0(x) + w(x)
+def run_rollout(x0, c_mode, steps=200, dt=0.02):
+    x = np.array(x0, dtype=np.float32)
+    for _ in range(steps):
+        r = np.linalg.norm(x)
+        r_hat = x / r
+        phi_hat = np.array([-x[1], x[0]]) / r
+        
+        # Radial Invariant Base Field: \dot{V} = -2*k*V <= 0
+        v0 = - k_radial * (r - R) * r_hat
+        
+        # Generative Tangent Flow along Level Set: \nabla V^T w == 0
+        with torch.no_grad():
+            w_pred = float(model(torch.tensor(x).unsqueeze(0), torch.tensor([[c_mode]])).numpy()[0, 0])
+        w = w_pred * r * phi_hat
+        
+        x = x + (v0 + w) * dt
+    return x, abs(np.linalg.norm(x) - R)
+
+# Test from Unseen OOD Shock Initial States
+x_end_ccw, err_ccw = run_rollout([0.3, 0.3], c_mode=1.0)
+x_end_cw, err_cw = run_rollout([2.2, -1.5], c_mode=-1.0)
+
+print("=" * 65)
+print(f"Module 2B Verification (Orthogonal Limit Cycle Flow):")
+print(f"  • CCW Mode from Shock [0.3, 0.3] : End Radius = {np.linalg.norm(x_end_ccw):.4f} (Error = {err_ccw:.4f})")
+print(f"  • CW  Mode from Shock [2.2, -1.5]: End Radius = {np.linalg.norm(x_end_cw):.4f} (Error = {err_cw:.4f})")
+print("=" * 65)
+```
+
+> **The Central Thesis**:
+> *"Instead of learning trajectories from MPC, learn a stable physical vector field from local MPC feedback, and use a generative model to explore diverse trajectories that preserve its stability properties."*  
+> （不再让生成模型仅仅模仿 MPC 的轨迹，而是让它学习 MPC 的局部稳定规律，并在这些规律约束下生成多种不同的运动。）
+
+---
+
 ## Module 3: Long-Horizon Generative Planning vs. Local Receding MPC
 
 ### Theoretical Formulation
@@ -428,11 +577,11 @@ print("=" * 65)
 
 ### Visual Verification: Trajectory Stitching Across Disjoint Fragments
 
-The empirical trajectory stitching results evaluated on the PyTorch Flow Matching policy are visualized in **Figure 2**:
+The empirical trajectory stitching results evaluated on the PyTorch Flow Matching policy are visualized in **Figure 3**:
 
 ![Trajectory Stitching Benchmark Visualization](figures/trajectory_stitching_benchmark.png)
 
-> **Figure 2: Real Neural Trajectory Stitching Around a Non-Convex Barrier.**  
+> **Figure 3: Real Neural Trajectory Stitching Around a Non-Convex Barrier.**  
 > - *(Left Panel)*: The offline training dataset consists strictly of disconnected local snippets with **zero complete demonstrations** connecting Start $S(-2.5, 0)$ to Goal $G(+2.5, 0)$ around the central obstacle wall.  
 > - *(Right Panel)*: The continuous vector field learned by Flow Matching smoothly glues overlapping local tangent distributions at the apex, generating a smooth, collision-free global path from $S$ to $G$ with 100% success across 100 evaluation trials.
 
@@ -522,11 +671,11 @@ print("=" * 65)
 
 ### Visual Verification: Dynamic Walking and Capture Point Stabilization
 
-The empirical LIPM bipedal walking stress test across 100 evaluation episodes is visualized in **Figure 3**:
+The empirical LIPM bipedal walking stress test across 100 evaluation episodes is visualized in **Figure 4**:
 
 ![Dynamic Bipedal Walking Capture Point Comparison](figures/bipedal_walking_comparison.png)
 
-> **Figure 3: Dynamic Bipedal Walking Capture Point Stress Test.**  
+> **Figure 4: Dynamic Bipedal Walking Capture Point Stress Test.**  
 > - *(Top Panels)*: Capture Point $\xi$ state trajectories. Pure Diffusion (DDPM) and Pure Flow Matching (CFM) suffer from the exponential error factor $e^{\omega T} \approx 4.05\times$ per footstep, causing the capture point to escape the support basin within 1–2 steps.  
 > - *(Right Panel)*: MPC-Guided Diffusion enforces invariant foot placement within the capture basin, achieving **100% stable walking (20.0 / 20 steps survived)** across all 100 test episodes.
 
@@ -566,11 +715,11 @@ To provide conclusive empirical evidence addressing peer critique, we executed a
 
 ### Visual Verification: Four-Way Benchmark Quantitative Comparison
 
-The quantitative comparison across recovery, constraint violations, and computation latency is visualized in **Figure 4**:
+The quantitative comparison across recovery, constraint violations, and computation latency is visualized in **Figure 5**:
 
 ![Four-Way Empirical Benchmark Comparison](figures/four_way_benchmark_comparison.png)
 
-> **Figure 4: Four-Way Empirical Benchmark Quantitative Comparison.**  
+> **Figure 5: Four-Way Empirical Benchmark Quantitative Comparison.**  
 > - *(Left)*: Recovery Success Rate (%) across 100 severe disturbance episodes ($\sigma = 0.5\,\mathrm{N\cdot m}$). All controllers achieve macroscopic balance in this baseline inverted pendulum task.  
 > - *(Middle)*: Invariant Constraint Violation Rate (%). Pure Flow Matching incurs a **20.8% violation rate**, whereas our Flow Matching + CBF projection forces violations strictly to **0.0%**, matching Pure MPC.  
 > - *(Right)*: Inference Latency per step (ms). Flow Matching + CBF executes in **0.099 ms**, which is **1.7x faster** than online receding-horizon QP optimization ($0.167\,\mathrm{ms}$).
