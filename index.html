@@ -672,6 +672,83 @@
             </div>
         </section>
 
+        <!-- Benchmark 9: Hierarchical Control & Plant Feasibility under Model Perturbations -->
+        <section>
+            <h2>🛡️ Experiment 9: Hierarchical Control & Plant Feasibility under Model Perturbations</h2>
+            <p><strong>Separation of Concerns Double-Checked</strong>: The Policy does <em>not</em> output raw torque commands $u$ executed directly by motors. Instead, the Policy learns the capability to plan <strong>dynamically feasible state trajectories</strong> $x_{\text{ref}}(t)$. In deployment, the physical <strong>Plant</strong> computes the tracking torque $u_{\text{plant}}$ via inverse dynamics PD control. If $|u_{\text{plant}}| \le u_{\max}$, the planned path is physically feasible for the perturbed hardware; if $|u_{\text{plant}}| > u_{\max}$, the path is infeasible due to physical saturation under model mismatch.</p>
+
+            <div class="figure-container">
+                <img src="figures/hierarchical_tracking_model_perturbation.png" alt="Hierarchical Tracking under Model Perturbation">
+                <div class="figure-caption"><strong>Figure 9:</strong> Hierarchical Control Performance under Physical Plant Parameter Perturbations ($\Delta m \in [-25\%, +60\%]$, $\Delta l \in [-15\%, +35\%]$, $b \in [0.0, 0.35]$). (A) 100.0% Closed-loop recovery success across all regimes. (B) Path feasibility rate ($|u_{\text{plant}}| \le u_{\max}$) remains between 96.0% and 100.0%. (C) Trajectory tracking error remains minimal ($0.0058 \sim 0.0067$).</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plant Perturbation Regime</th>
+                        <th>Mass Error ($\Delta m$)</th>
+                        <th>Length Error ($\Delta l$)</th>
+                        <th>Joint Friction ($b$)</th>
+                        <th>Recovery Rate ↑</th>
+                        <th>Path Feasibility ↑</th>
+                        <th>Mean Tracking Error ↓</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nominal Plant</strong></td>
+                        <td>0%</td>
+                        <td>0%</td>
+                        <td>0.00</td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>0.0058</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Moderate Plant</strong></td>
+                        <td>+20%</td>
+                        <td>+15%</td>
+                        <td>0.10</td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>99.6%</strong></td>
+                        <td><strong>0.0058</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Heavy Plant</strong></td>
+                        <td>+40%</td>
+                        <td>+25%</td>
+                        <td>0.25</td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>98.3%</strong></td>
+                        <td><strong>0.0059</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Extreme Plant</strong></td>
+                        <td>+60%</td>
+                        <td>+35%</td>
+                        <td>0.35</td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>96.0%</strong></td>
+                        <td><strong>0.0067</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Light Fast Plant</strong></td>
+                        <td>-25%</td>
+                        <td>-15%</td>
+                        <td>0.05</td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>100.0%</strong></td>
+                        <td><strong>0.0058</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout" style="background: #f0fdf4; border-color: #86efac; color: #166534;">
+                <strong>Empirical Robustness Finding:</strong>
+                <p>Because the High-Level Policy plans state trajectories learned from an MPC recovery vector field that respects energy and torque limits, the paths possess intrinsic dynamic feasibility. Even when physical mass increases by +60% and link length increases by +35% with unmodeled joint friction, the Plant tracking controller realizes the required torque within bounds in <strong>96.0% to 100.0%</strong> of steps, preserving <strong>100.0% closed-loop recovery stability</strong>.</p>
+            </div>
+        </section>
+
         <!-- The Three Pillars: Why Policy + MPC is the Future -->
         <section>
             <h2>🏛️ Architectural Synthesis: The Three Pillars of Generative Policy vs. MPC</h2>
