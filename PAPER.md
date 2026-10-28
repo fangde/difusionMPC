@@ -462,9 +462,22 @@ A pivotal design realization in physical deployment is the **separation of conce
 
 ## 8. Discussion: Why Policy is Indispensable — The Three Pillars of Generative Control
 
-A fundamental question arises from our empirical findings: **"If an optimal controller (MPC) already achieves a 100% stability rate, why introduce a neural generative policy at all? Why not deploy pure MPC directly in production?"**
+### 8.0 The Engineering Dilemma in Robotics Practice
+In real-world robotic engineering and industrial automation, this synthesis addresses a pervasive practical dilemma:
+1. **The Ubiquity of Rigid-Body Models & Hard Stability Requirements**:
+   In robotics, accurate physical models are **widely available and highly mature** (URDF files, Euler-Lagrange equations, CAD inertia tensors, and motor torque-speed curves). Furthermore, industrial deployments strictly demand **hard stability, non-negotiable safety bounds, and predictable behavior**. This makes model-based control (PID, LQR, Computed Torque, and MPC) the gold standard across factory floors and field robotics.
+2. **The First Bottleneck: MPC is Inherently Local and Cannot Assimilate Demonstrations**:
+   Expert demonstrations (teleoperation, human mocap, and long-range heuristics) encode invaluable global intuition, multi-modal routing, and non-convex energy pumping. However, MPC optimizes strictly within a localized, finite receding horizon ($H \approx 0.2\text{--}0.5\,\mathrm{s}$). It possesses **no natural mathematical mechanism to ingest unstructured global demonstration manifolds**, routinely falling into local energy minima, cul-de-sacs, or deadlocks when facing non-convex obstacles.
+3. **The Second Bottleneck: Online Iterative Optimization is Computationally Crippling**:
+   As an **online numerical optimization algorithm**, MPC repeatedly solves non-convex Nonlinear Programs (NMPC) or Quadratic Programs (QP) in the critical path of the control loop. Solving these online consumes **$20\text{--}80\,\mathrm{ms}$ with severe non-deterministic jitter**. In contrast, dynamic robotic hardware (humanoid balance, quadruped locomotion, high-speed manipulators) requires tight joint-level feedback loops running at **$500\,\mathrm{Hz}\text{--}1000\,\mathrm{Hz}$ ($1\text{--}2\,\mathrm{ms}$)**. Online optimization latency introduces catastrophic phase lag, often causing hardware to collapse before the solver terminates.
+4. **The Resolution via Offline Amortization & Controlled Symmetry**:
+   Our paradigm resolves this dilemma by:
+   - **Amortizing Computation Offline**: We spend abundant offline computing resources running high-throughput MPC perturbation samplings to construct dense local recovery patches;
+   - **Stitching with Global Demonstrations**: We use demonstrations as the global thread to weave local patches into a globally stable phase-space manifold;
+   - **Deterministic Microsecond Inference**: Flow matching collapses the online iterative search into a **deterministic feedforward evaluation ($< 0.1\,\mathrm{ms}$ at 1000 Hz)**;
+   - **Preserving Industrial Ecosystems (Controlled Symmetry)**: At deployment, the high-level policy plans the dynamically feasible reference trajectory, while existing, mature low-level controllers (PID / inverse dynamics) provide feedback error compensation, strictly preserving controlled symmetry without replacing industrial motor drive stacks.
 
-While classical MPC appears self-sufficient in low-dimensional toy benchmarks, it encounters insurmountable physical, computational, and perceptual barriers when deployed in complex, real-world robotic environments. We formalize the **Three Foundational Pillars** establishing why the Generative Policy is indispensable, while MPC serves as the invariant safety shield:
+---
 
 ### 8.1 Pillar 1: Globality & Long-Horizon Non-Convex Reasoning (Overcoming MPC's Myopia)
 Classical Model Predictive Control is fundamentally **myopic**: it optimizes over a finite horizon $H$ (typically $H \in [10, 30]$ time steps, spanning $0.2\text{--}0.6\text{ s}$):
