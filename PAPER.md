@@ -88,13 +88,13 @@ To operationalize this theoretical bridge, our methodology resolves three founda
      $$\mathcal{L}_{\text{CFM}}(\theta) = \mathbb{E}_{t, x_0, x_1} \left\| v_\theta(x_t, t) - (x_1 - x_0) \right\|^2$$
      The diffeomorphism of continuous neural flows naturally glues disjoint patches into a smooth, globally consistent recovery field.
 
-3. **Question 3: How to deploy in physical hardware? Controlled Symmetry (Feedforward Plan + Feedback Compensation)**
+3. **Question 3: How to deploy in physical hardware? Controlled Symmetry: Preserving Symmetry through Control**
    - *Physical Reality*: The policy is trained on nominal model dynamics. Real hardware suffers from model mismatches (mass error $\Delta m$, link error $\Delta l$, joint friction $b$) and sensor noise.
    - *Hierarchical Division*:
      - **High-Level Policy (Feedforward Feasible Planner)**: Plans a dynamically feasible global reference state trajectory $x_{\text{ref}}(t) \in \mathcal{M}$ on the learned manifold. It does *not* output raw open-loop motor torques.
      - **Low-Level Plant Controller (Feedback Error Compensator)**: The physical hardware's local tracking controller (inverse dynamics computed torque or high-frequency PD) computes the actual torque:
        $$u_{\text{plant}} = I_{\text{plant}}\left(\ddot{x}_{\text{des}} - \frac{g}{l_{\text{plant}}}\sin(\theta)\right) + b_{\text{plant}}\dot{\theta}$$
-   - *The Controlled Symmetry Principle*: The local control's sole purpose is **error compensation**. It dynamically absorbs parameter deviations to preserve symmetry with the planned nominal feasible manifold. As long as $|u_{\text{plant}}| \le u_{\max}$, the controlled symmetry is strictly maintained, ensuring asymptotic stability under model perturbations.
+   - *The Controlled Symmetry Principle*: **We call this paradigm Controlled Symmetry—that is, using control to preserve the system's dynamic symmetry.** The policy plans the ideal symmetric manifold, while the local controller provides active error compensation. It dynamically absorbs parameter deviations to maintain the physical system's orbital symmetry with respect to the planned feasible manifold. As long as $|u_{\text{plant}}| \le u_{\max}$, the controlled symmetry is strictly maintained, ensuring asymptotic stability under model perturbations.
 
 ### Contributions
 1. **Vector-Field Ontological Unification**: We formulate Diffusion and MPC as two operational modes of the same underlying continuous vector field, enabling diffusion to inherit Lyapunov stability.
@@ -434,13 +434,15 @@ To validate our proposed framework under strict, peer-review-grade experimental 
 
 ---
 
-### 7.9 Hierarchical Control Architecture: Feasible Path Planning Policy vs. Plant Tracking Control under Model Perturbation
+### 7.9 Controlled Symmetry: Preserving Dynamical Symmetry through Control under Model Perturbation
+
+We coin and formalize this deployment paradigm as **Controlled Symmetry**: *using active control to preserve the system's dynamical symmetry with respect to the feasible reference manifold*.
 
 A pivotal design realization in physical deployment is the **separation of concerns**:
 - The high-level neural policy does **not** command open-loop actuator torques $u$.
 - Instead, the policy learns from the MPC recovery vector field the capability to **plan dynamically feasible state paths / reference trajectories** $x_{\text{ref}}(t)$.
 - In deployment, the physical Plant's low-level tracking controller (inverse dynamics PD computed torque) computes the actual torque $u_{\text{plant}}$ to follow $x_{\text{ref}}(t)$.
-- **Dynamic Path Feasibility Criterion**: If the required tracking torque satisfies $|u_{\text{plant}}| \le u_{\max}$, the planned path is physically feasible under real hardware dynamics. If the plant undergoes parameter drift (mass error $\Delta m$, length error $\Delta l$, damping friction $b$), path infeasibility manifests as actuator saturation ($|u_{\text{plant}}| > u_{\max}$).
+- **Dynamic Path Feasibility Criterion**: If the required tracking torque satisfies $|u_{\text{plant}}| \le u_{\max}$, the planned path is physically feasible under real hardware dynamics. If the plant undergoes parameter drift (mass error $\Delta m$, length error $\Delta l$, damping friction $b$), path infeasibility manifests as actuator saturation ($|u_{\text{plant}}| > u_{\max}$), signaling a breakdown of controlled symmetry.
 
 ![Hierarchical Tracking Benchmark under Model Perturbation](figures/hierarchical_tracking_model_perturbation.png)
 

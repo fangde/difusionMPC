@@ -60,15 +60,16 @@
   $$\mathcal{L}_{\mathrm{CFM}}(\theta) = \mathbb{E}_{t, x_0, x_1} \left\| v_\theta(x_t, t) - (x_1 - x_0) \right\|^2$$
   神经网络的光滑拟合特性自然抹平了局部补丁之间的边界不连续性，形成一个能够独立外推且处处可微的全局恢复向量场。
 
-#### 3. 问题三：在落地部署时，如何实现 Controlled Symmetry（受控对称性与前馈-反馈分层）？
+#### 3. 问题三：在落地部署时，实现 Controlled Symmetry（也就是用控制来保持系统的对称性）
+- **核心定义**：**我们称之为 Controlled Symmetry——也就是用控制来保持系统的对称性。**
 - **物理现实**：Policy 在名义物理模型（Nominal Dynamics）上学到了完美的全局稳定流形。但在实物部署时，由于物理参数摄动（质量 $\Delta m$、摆长 $\Delta l$、未建模关节摩擦 $b$）以及传感器噪声，实际物理对象与名义模型必然存在失配。
 - **架构解耦**：
   - **高层 Policy 充当“前馈式物理可行规划器”**：Policy **不直接开环输出底层电机的力矩 $u$**，而是根据当前状态，在学到的流形上规划出一条具有真实物理意义、内生动力学可行的全局参考状态轨迹 $x_{\mathrm{ref}}(t)$（作为前馈参考）。
   - **底层 Plant 充当“受控对称性误差补偿器”**：物理硬件的局部控制器（逆动力学 Computed Torque 或高频 PID）根据实时实际参数与跟踪误差计算所需的控制力矩：
     $$u_{\mathrm{plant}} = I_{\mathrm{plant}}\left(\ddot{x}_{\mathrm{des}} - \frac{g}{l_{\mathrm{plant}}}\sin(\theta)\right) + b_{\mathrm{plant}}\dot{\theta}$$
 - **Controlled Symmetry 的物理本质**：
-  - 控制的作用是**补偿误差（Error Compensation）**。底层控制器通过反馈注入抵抗物理偏差，使得摄动后的物理实体在宏观上表现出与 Policy 规划的 nominal 流形高度对称的运动学行为。
-  - **稳定性充要判据**：当且仅当补偿误差所需的力矩处于电机物理约束之内（$|u_{\mathrm{plant}}| \le u_{\max}$）时，受控对称性得以严格维持，系统在模型摄动下依然保持全局稳定！
+  - 控制的作用是**补偿误差（Error Compensation）**。底层控制器通过主动施加反馈力矩抵消物理偏差，**用控制来保持系统关于 nominal 可行流形的动态对称性**，使得摄动后的物理实体在宏观上表现出与 Policy 规划完全对称一致的稳定恢复行为。
+  - **稳定性充要判据**：当且仅当补偿误差所需的力矩处于电机物理约束之内（$|u_{\mathrm{plant}}| \le u_{\max}$）时，受控对称性得以严格维持，系统在模型摄动下依然保持全局稳定！一旦力矩饱和，对称性破缺。
 
 ---
 
@@ -930,13 +931,13 @@ The quantitative comparison across recovery, constraint violations, and computat
 
 ---
 
-## Module 7: Hierarchical Control Architecture: Policy Feasible Trajectory Planning vs. Plant Tracking Control under Model Perturbation
+## Module 7: Controlled Symmetry: Preserving Dynamical Symmetry through Control under Model Perturbation
 
-### Theoretical Formulation: The Separation of Concerns
+### Theoretical Formulation: Controlled Symmetry（也就是用控制来保持系统的对称性）
 
 A critical conceptual error in naive imitation learning is assuming the neural policy should output raw actuator torques $u$ applied directly to physical motors in an open-loop fashion. In real physical hardware, physical parameters inevitably drift: masses change ($m \mapsto m + \Delta m$), links alter ($l \mapsto l + \Delta l$), and unmodeled friction/damping $b$ emerges. Direct torque execution under parameter mismatch causes catastrophic tracking errors.
 
-Instead, the **proper hierarchical division of labor** is:
+Instead, we formalize this deployment architecture as **Controlled Symmetry（受控对称性，也就是用控制来保持系统的对称性）**:
 1. **High-Level Policy as Feasible Path/Trajectory Planner**:
    The generative policy learns from the MPC recovery vector field the fundamental capacity to **plan dynamically feasible state paths / reference trajectories** $x_{\text{ref}}(t)$ (or discrete state transitions $x_t \mapsto x_{\text{ref}, t+1}$).
    Because the training data stems from MPC respecting physical dynamics, torque saturation, and energy limits, the planned path is dynamically feasible on the nominal system:
@@ -945,11 +946,11 @@ Instead, the **proper hierarchical division of labor** is:
    The physical plant executes a closed-loop tracking / inverse dynamics controller that calculates the required torque $u_{\text{plant}}$ to follow the policy's planned reference state:
    $$u_{\text{plant}} = I_{\text{plant}} \left( \ddot{x}_{\text{des}} - \frac{g}{l_{\text{plant}}} \sin(\theta) \right) + b_{\text{plant}} \dot{\theta}$$
    where $\ddot{x}_{\text{des}} = \frac{\dot{\theta}_{\text{ref}} - \dot{\theta}}{\Delta t} + K_p (\theta_{\text{ref}} - \theta) + K_d (\dot{\theta}_{\text{ref}} - \dot{\theta})$.
-3. **Dynamic Path Feasibility Criterion under Model Perturbation**:
-   - **Feasible Path**: If the required torque lies within actuator limits:
+3. **Controlled Symmetry & Dynamic Path Feasibility Criterion**:
+   - **Symmetry Preserved (Feasible Path)**: If the required torque lies within actuator limits:
      $$\left| u_{\text{plant}} \right| \le u_{\max}$$
-     then the planned trajectory is physically realizable by the perturbed hardware, proving that the system maintains robust stability despite plant changes.
-   - **Infeasible Path**: If $|u_{\text{plant}}| > u_{\max}$, the actuator saturates, the hardware cannot deliver the required torque to follow the path, and tracking degrades or fails.
+     then the feedback control successfully absorbs the physical model perturbation, preserving dynamic symmetry with the planned nominal feasible manifold. The system maintains robust asymptotic stability.
+   - **Symmetry Broken (Infeasible Path)**: If $|u_{\text{plant}}| > u_{\max}$, the actuator saturates, the hardware cannot deliver the required torque to follow the path, and dynamic symmetry breaks down.
 
 ---
 
