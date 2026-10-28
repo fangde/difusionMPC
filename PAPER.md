@@ -8,15 +8,15 @@
 > ### Executive Manifesto: Generative Control Learning via Local MPC Vector Fields  
 > **（基于局部 MPC 向量场的生成式控制学习）**
 >
-> The fundamental premise of this work is **not to force a neural network to learn the iterative MPC optimization algorithm (solving non-convex QPs online), nor to imitate pre-recorded end-to-end trajectories, but to learn the closed-loop recovery vector field constructed by MPC across state-space perturbations**:
+> The foundational thesis of this work resolves the fundamental dichotomy between Generative AI and Optimal Control:
 >
-> 1. **Perturbation-Based State Exploration**: Starting from the target equilibrium $x^*$, we inject stochastic disturbances of varying magnitudes to sample a wide distribution of initial states $x_i = x^* + \epsilon_i$.
-> 2. **Local Physical Vector Supervision**: For each perturbation, local receding-horizon MPC computes the instantaneous recovery control $u_i^* = \operatorname{MPC}(x_i)$. When repeated feedback returns to the goal, the empirical physical velocity vector $v_i = f(x_i, u_i^*)$ is recorded into a scattered dataset $\mathcal{D} = \{(x_i, v_i)\}_{i=1}^N$ **without storing complete long trajectories**.
-> 3. **Generative Continuous Flow Learning**: We train Diffusion and Flow Matching models to learn the probability vector field and state evolution induced by this recovery field.
-> 4. **Microsecond Closed-Loop Integration**: During online deployment, the system continuously integrates along the learned field $\frac{dx}{dt} = F_\theta(x)$ at $1000\,\mathrm{Hz}$ ($< 0.1\,\mathrm{ms}$), inheriting the empirical recovery capability of MPC without incurring any iterative optimization latency.
+> 1. **Diffusion's Superpower and Flaw**: Diffusion / Flow Matching guarantees **zero intrinsic physical stability**, but possesses **unmatched global capability**—naturally avoiding local energy traps, stitching non-contiguous trajectory fragments, and synthesizing multi-modal behaviors across long horizons.
+> 2. **MPC's Superpower and Flaw**: Classical MPC guarantees **rigorous local physical feasibility and Lyapunov contraction**, but is fundamentally **myopic (lacks globality)** due to finite horizons, easily deadlocking in underactuated swing-ups or cul-de-sacs, while suffering from prohibitive online iterative optimization latency ($20\text{--}80\,\mathrm{ms}$).
+> 3. **The Unifying Vector-Field Ontology**: Both physical control systems and continuous generative models operate fundamentally on **continuous vector fields** on the state manifold:
+>    $$\dot{x} = F^*(x) = f(x, u^*(x)) \quad \longleftrightarrow \quad \frac{dx}{dt} = v_\theta(x, t)$$
 >
-> **The Central Thesis**:  
-> *The essence of this methodology is not trajectory imitation, but experimentally constructing an empirical recovery vector field via local MPC, and using generative flow matching to synthesize scattered local recovery laws into a fast, continuous, and generalizable control model.*
+> **The Core Theoretical Invariance**:  
+> *If the vector field learned by Diffusion encodes genuine physical recovery dynamics rather than empirical statistical density shifts, then the resulting generative flow naturally inherits the stability, invariant basins, and contraction properties of the physical system. This is because dynamic stability is an intrinsic property of the vector field's geometry and Lie derivatives ($\nabla V^\top F < 0$), completely independent of whether that field was generated via online local QP optimization or neural diffusion integration!*
 
 ---
 
@@ -60,9 +60,21 @@ By decoupling policy learning into:
 1. **Topology via Controller**: The controller constructs the global invariant neighborhood $\Omega = \{x \mid V(x) \le c\}$ ensuring contraction ($\dot{V} \le 0$) across the full phase space. When sudden noise hits the system, it may respond with sub-optimal energy, but stability is preserved as a hard invariant.
 2. **Metric via Demonstrations**: Within this topologically stable funnel, diffusion/flow matching learns the task-specific metric—choosing the optimal multi-modal geodesics, timings, and velocities demonstrated by experts.
 
+### 1.1 The Common Theoretical Ground: Vector Fields as the Invariant Bridge
+
+To unify Generative Modeling and Optimal Control, we must identify their common mathematical ontology:
+1. **Diffusion has Globality, but lacks Physical Stability**: Diffusion and Flow Matching models excel at synthesizing global, non-convex, and multimodal trajectories. However, unconstrained generative models provide zero Lyapunov descent guarantees; out-of-distribution hallucinations and sampling variance routinely breach physical feasibility limits.
+2. **Classical MPC has Local Physical Fidelity, but lacks Globality and Speed**: Receding-horizon MPC guarantees strict dynamic satisfaction and Lyapunov contraction locally. However, its finite horizon ($H$) renders it myopic—it readily falls into local energy minima (e.g. failing multi-pump underactuated swing-ups). Furthermore, solving numerical QPs/SQPs online incurs prohibitive $20\text{--}80\,\mathrm{ms}$ latency and non-deterministic timing jitter.
+3. **The Vector Field Bridge**: Both paradigms ultimately operate on **vector fields** on the state manifold:
+   - Closed-loop control dynamics: $\dot{x} = F^*(x) = f(x, u^*(x))$.
+   - Continuous normalizing flow: $\frac{dx}{dt} = v_\theta(x, t)$.
+
+> **The Foundational Principle**:  
+> *Dynamic properties—such as asymptotic stability, contraction rates, and forward-invariant basins of attraction—are intrinsic properties of the vector field itself ($\nabla V^\top F < 0$). They do not depend on whether the field is evaluated via online QP optimization or integrated via a neural network. Therefore, if the vector field learned by Diffusion encodes physical recovery dynamics rather than empirical statistical density shifts, the resulting generative flow naturally inherits the stability and invariance of the physical system.*
+
 ### Contributions
-1. **Topological-Metric Duality**: We propose a principled decoupling between topological invariance (governed by physics and control) and Riemannian metric selection (learned from demonstrations via continuous flows).
-2. **Unified Vector-Field Framework**: We cast Score-Based Diffusion, Conditional Flow Matching, and Model-Driven Neural Flows into a mathematically identical state-space perturbation-recovery pipeline.
+1. **Vector-Field Ontological Unification**: We formulate Diffusion and MPC as two operational modes of the same underlying continuous vector field, enabling diffusion to inherit Lyapunov stability.
+2. **Topological-Metric Duality**: We propose a principled decoupling between topological invariance (governed by physics and control) and Riemannian metric selection (learned from demonstrations via continuous flows).
 3. **Dynamic Inadmissibility Analysis**: We formalize why empirical statistical vectors violate non-holonomic dynamic constraints on underactuated systems under out-of-distribution noise.
 4. **Empirical Benchmarks**: We benchmark on an underactuated double pendulum across varying dataset sizes $N \in [25, 1000]$ and disturbance noise severities $\sigma \in [0.05, 0.30\text{ rad}]$, demonstrating graceful degradation and stability preservation under severe perturbations.
 
