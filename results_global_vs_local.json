@@ -1,0 +1,17 @@
+{
+    "Local_Symbolic_MPC": {
+        "success": 0,
+        "trapped": 100,
+        "collision": 100
+    },
+    "Pure_Global_Policy": {
+        "success": 0,
+        "trapped": 24,
+        "collision": 91
+    },
+    "Global_Policy_plus_Local_MPC": {
+        "success": 0,
+        "trapped": 24,
+        "collision": 64
+    }
+}

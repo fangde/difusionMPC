@@ -1,0 +1,14 @@
+{
+    "Local_Symbolic_MPC": {
+        "success": 0,
+        "trapped_bottom": 98
+    },
+    "Pure_Global_Policy": {
+        "success": 0,
+        "trapped_bottom": 100
+    },
+    "Global_Policy_plus_Local_MPC": {
+        "success": 0,
+        "trapped_bottom": 100
+    }
+}
