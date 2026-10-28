@@ -17,6 +17,9 @@
 >
 > **The Core Theoretical Invariance**:  
 > *If the vector field learned by Diffusion encodes genuine physical recovery dynamics rather than empirical statistical density shifts, then the resulting generative flow naturally inherits the stability, invariant basins, and contraction properties of the physical system. This is because dynamic stability is an intrinsic property of the vector field's geometry and Lie derivatives ($\nabla V^\top F < 0$), completely independent of whether that field was generated via online local QP optimization or neural diffusion integration!*
+>
+> **The Engineering Vision: Breaking the Robotic Control Trilemma**:  
+> *Our overarching objective is to establish an architecture that simultaneously solves the foundational trilemma of real-world robotics engineering: **Real-Time Performance** ($< 0.1\,\mathrm{ms}$ at $1000\,\mathrm{Hz}$), **Adaptability** (robust invariance under severe model perturbations and unmodeled friction), and **Hard Stability** ($0.0\%$ constraint violations and provable Lyapunov contraction).*
 
 ---
 
