@@ -1,0 +1,218 @@
+{
+  "scenarios": {
+    "Scenario A (Nominal Baseline)": {
+      "nominal": {
+        "mode": "nominal",
+        "success": true,
+        "final_distance_m": 0.48459638098717395,
+        "forward_velocity_mps": 0.16153212699572464,
+        "mean_z_cm": 25.13050972676747,
+        "mean_pitch_deg": 0.7719800202490379,
+        "max_pitch_deg": 4.401931136742377,
+        "mean_torque_chatter": 422.2977768373118,
+        "total_slip_distance_cm": 228.69580256575688
+      },
+      "dr": {
+        "mode": "dr",
+        "success": false,
+        "final_distance_m": 0.06814505676778153,
+        "forward_velocity_mps": 0.02271501892259384,
+        "mean_z_cm": 25.531561004864074,
+        "mean_pitch_deg": 2.016716059006382,
+        "max_pitch_deg": 5.851979131083977,
+        "mean_torque_chatter": 547.9204369240086,
+        "total_slip_distance_cm": 117.61980554731521
+      },
+      "stiff_pd": {
+        "mode": "stiff_pd",
+        "success": true,
+        "final_distance_m": 0.46211747775494805,
+        "forward_velocity_mps": 0.15403915925164935,
+        "mean_z_cm": 26.75127047902364,
+        "mean_pitch_deg": 2.6054791147926615,
+        "max_pitch_deg": 8.67624792627766,
+        "mean_torque_chatter": 906.1366973038658,
+        "total_slip_distance_cm": 215.2149744060886
+      },
+      "ours": {
+        "mode": "ours",
+        "success": true,
+        "final_distance_m": 0.5323602152863404,
+        "forward_velocity_mps": 0.1774534050954468,
+        "mean_z_cm": 25.435690394327555,
+        "mean_pitch_deg": 0.6610648451432257,
+        "max_pitch_deg": 3.128451522528333,
+        "mean_torque_chatter": 455.7633033811694,
+        "total_slip_distance_cm": 175.8714289291361
+      }
+    },
+    "Scenario B (Slippery Ice)": {
+      "nominal": {
+        "mode": "nominal",
+        "success": true,
+        "final_distance_m": 0.48459638098717395,
+        "forward_velocity_mps": 0.16153212699572464,
+        "mean_z_cm": 25.13050972676747,
+        "mean_pitch_deg": 0.7719800202490379,
+        "max_pitch_deg": 4.401931136742377,
+        "mean_torque_chatter": 422.2977768373118,
+        "total_slip_distance_cm": 228.69580256575688
+      },
+      "dr": {
+        "mode": "dr",
+        "success": false,
+        "final_distance_m": 0.06814505676778153,
+        "forward_velocity_mps": 0.02271501892259384,
+        "mean_z_cm": 25.531561004864074,
+        "mean_pitch_deg": 2.016716059006382,
+        "max_pitch_deg": 5.851979131083977,
+        "mean_torque_chatter": 547.9204369240086,
+        "total_slip_distance_cm": 117.61980554731521
+      },
+      "stiff_pd": {
+        "mode": "stiff_pd",
+        "success": true,
+        "final_distance_m": 0.46297531172894574,
+        "forward_velocity_mps": 0.15432510390964857,
+        "mean_z_cm": 26.75083291071589,
+        "mean_pitch_deg": 2.603629885173327,
+        "max_pitch_deg": 8.67624792627766,
+        "mean_torque_chatter": 906.0142992138215,
+        "total_slip_distance_cm": 215.12740227188618
+      },
+      "ours": {
+        "mode": "ours",
+        "success": true,
+        "final_distance_m": 0.2997973794542052,
+        "forward_velocity_mps": 0.0999324598180684,
+        "mean_z_cm": 25.416191386291935,
+        "mean_pitch_deg": 0.5524861389378729,
+        "max_pitch_deg": 2.863524974117017,
+        "mean_torque_chatter": 410.4235301014297,
+        "total_slip_distance_cm": 132.93822187113798
+      }
+    },
+    "Scenario C (Front-Heavy Asymmetric)": {
+      "nominal": {
+        "mode": "nominal",
+        "success": true,
+        "final_distance_m": 0.1091200210627117,
+        "forward_velocity_mps": 0.036373340354237234,
+        "mean_z_cm": 24.08782208809759,
+        "mean_pitch_deg": 0.9662550715069879,
+        "max_pitch_deg": 5.385684295675739,
+        "mean_torque_chatter": 510.78360453122093,
+        "total_slip_distance_cm": 284.9787438248239
+      },
+      "dr": {
+        "mode": "dr",
+        "success": false,
+        "final_distance_m": 0.07064305159976884,
+        "forward_velocity_mps": 0.023547683866589616,
+        "mean_z_cm": 24.76381814630841,
+        "mean_pitch_deg": 0.7572967658891475,
+        "max_pitch_deg": 2.9820830993227436,
+        "mean_torque_chatter": 654.4952627629877,
+        "total_slip_distance_cm": 99.30455031947447
+      },
+      "stiff_pd": {
+        "mode": "stiff_pd",
+        "success": true,
+        "final_distance_m": 0.55937692387515,
+        "forward_velocity_mps": 0.18645897462505,
+        "mean_z_cm": 25.983081498078107,
+        "mean_pitch_deg": 1.0807286021539755,
+        "max_pitch_deg": 4.209681241485723,
+        "mean_torque_chatter": 982.6811993766767,
+        "total_slip_distance_cm": 182.4636737493536
+      },
+      "ours": {
+        "mode": "ours",
+        "success": true,
+        "final_distance_m": 0.3864990769606163,
+        "forward_velocity_mps": 0.12883302565353877,
+        "mean_z_cm": 25.858511025583386,
+        "mean_pitch_deg": 5.89886054172718,
+        "max_pitch_deg": 14.72022973005653,
+        "mean_torque_chatter": 746.3691648712304,
+        "total_slip_distance_cm": 192.22817723092808
+      }
+    },
+    "Scenario D (Compound Extreme Disaster)": {
+      "nominal": {
+        "mode": "nominal",
+        "success": false,
+        "final_distance_m": 0.017344808911547566,
+        "forward_velocity_mps": 0.0057816029705158554,
+        "mean_z_cm": 23.84801644395154,
+        "mean_pitch_deg": 0.9981459341158835,
+        "max_pitch_deg": 5.360061406624872,
+        "mean_torque_chatter": 533.281760562749,
+        "total_slip_distance_cm": 275.8757218603292
+      },
+      "dr": {
+        "mode": "dr",
+        "success": false,
+        "final_distance_m": 0.049359448252104726,
+        "forward_velocity_mps": 0.01645314941736824,
+        "mean_z_cm": 24.617984265932847,
+        "mean_pitch_deg": 0.914564308069916,
+        "max_pitch_deg": 3.1565001688752283,
+        "mean_torque_chatter": 695.6780992828556,
+        "total_slip_distance_cm": 102.08979504523994
+      },
+      "stiff_pd": {
+        "mode": "stiff_pd",
+        "success": true,
+        "final_distance_m": 0.5424611179119578,
+        "forward_velocity_mps": 0.1808203726373193,
+        "mean_z_cm": 25.84073168649504,
+        "mean_pitch_deg": 1.220707574744274,
+        "max_pitch_deg": 3.78759098043791,
+        "mean_torque_chatter": 1003.5196946578224,
+        "total_slip_distance_cm": 190.8547011671066
+      },
+      "ours": {
+        "mode": "ours",
+        "success": true,
+        "final_distance_m": 0.12285305994010788,
+        "forward_velocity_mps": 0.04095101998003596,
+        "mean_z_cm": 25.71118491364403,
+        "mean_pitch_deg": 5.7686994730656815,
+        "max_pitch_deg": 14.442798880640927,
+        "mean_torque_chatter": 779.5576787884246,
+        "total_slip_distance_cm": 167.0221153123641
+      }
+    }
+  },
+  "mc_summary": {
+    "nominal": {
+      "success_rate_pct": 92.5,
+      "mean_velocity_mps": 0.09437684646879967,
+      "mean_pitch_deg": 1.0076693975174995,
+      "mean_slip_cm": 274.5271735575763,
+      "mean_torque_chatter": 476.8700347412358
+    },
+    "dr": {
+      "success_rate_pct": 65.0,
+      "mean_velocity_mps": 0.037622449983194355,
+      "mean_pitch_deg": 1.2294397131036192,
+      "mean_slip_cm": 104.44120311007217,
+      "mean_torque_chatter": 566.6050562832567
+    },
+    "stiff_pd": {
+      "success_rate_pct": 100.0,
+      "mean_velocity_mps": 0.18669334459033599,
+      "mean_pitch_deg": 1.1120012731986715,
+      "mean_slip_cm": 180.6080939576052,
+      "mean_torque_chatter": 909.2427724959186
+    },
+    "ours": {
+      "success_rate_pct": 100.0,
+      "mean_velocity_mps": 0.09123462757931802,
+      "mean_pitch_deg": 2.8748957520904503,
+      "mean_slip_cm": 137.2672013891367,
+      "mean_torque_chatter": 605.1692371054902
+    }
+  }
+}
