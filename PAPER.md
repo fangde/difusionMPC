@@ -99,11 +99,18 @@ To operationalize this theoretical bridge, our methodology resolves three founda
        $$u_{\text{plant}} = I_{\text{plant}}\left(\ddot{x}_{\text{des}} - \frac{g}{l_{\text{plant}}}\sin(\theta)\right) + b_{\text{plant}}\dot{\theta}$$
    - *The Controlled Symmetry Principle*: **We call this paradigm Controlled Symmetry—that is, using control to preserve the system's dynamic symmetry.** The policy plans the ideal symmetric manifold, while the local controller provides active error compensation. It dynamically absorbs parameter deviations to maintain the physical system's orbital symmetry with respect to the planned feasible manifold. As long as $|u_{\text{plant}}| \le u_{\max}$, the controlled symmetry is strictly maintained, ensuring asymptotic stability under model perturbations.
 
+4. **Question 4: How to adapt to extreme model changes without online retraining? The Transformation Observer**
+   - *The Robotics Reality*: In physical applications (e.g., a walking biped carrying heavy cargo, or manipulators picking up unknown payloads), mass doubles or friction spikes. Online neural network retraining is physically impossible on embedded robots.
+   - *Beyond Black-Box Domain Randomization*: In Reinforcement Learning, Domain Randomization (DR) brute-forces policies to survive across randomized worlds, yielding overly conservative, stiff behaviors. In contrast, we recognize that physical parameter variations (mass, inertia, friction) represent **smooth diffeomorphic Lie group actions on the phase-space manifold**.
+   - *The Transformation Observer*: A causal Trajectory Transformer observes short history snippets $\tau_{\text{hist}} = \{(x_{t-k}, u_{t-k})\}$ to extract the coordinate transformation $\Phi: \mathcal{X}_{\text{real}} \to \mathcal{Z}_{\text{nom}}$. The nominal policy $F^*$ is evaluated in nominal space, and its output is geometrically pulled back:
+     $$v_{\text{real}} = (D\Phi)^{-1} F^*(\Phi(x))$$
+     This scales acceleration demands down by $1/\lambda$, algebraically eliminating torque saturation and achieving instant zero-retraining adaptation!
+
 ### Contributions
 1. **Vector-Field Ontological Unification**: We formulate Diffusion and MPC as two operational modes of the same underlying continuous vector field, enabling diffusion to inherit Lyapunov stability.
-2. **Topological-Metric Duality**: We propose a principled decoupling between topological invariance (governed by physics and control) and Riemannian metric selection (learned from demonstrations via continuous flows).
-3. **Dynamic Inadmissibility Analysis**: We formalize why empirical statistical vectors violate non-holonomic dynamic constraints on underactuated systems under out-of-distribution noise.
-4. **Empirical Benchmarks**: We benchmark on an underactuated double pendulum across varying dataset sizes $N \in [25, 1000]$ and disturbance noise severities $\sigma \in [0.05, 0.30\text{ rad}]$, demonstrating graceful degradation and stability preservation under severe perturbations.
+2. **Controlled Symmetry & The Robotic Control Trilemma**: We solve the trilemma of real-time speed (<0.1ms at 1000Hz), adaptability, and hard stability via hierarchical feedforward planning and feedback error compensation.
+3. **Transformation Observer for Zero-Retraining Adaptation**: We replace brute-force Domain Randomization with analytical and neural coordinate diffeomorphisms, enabling instantaneous payload adaptation without retraining.
+4. **Empirical Benchmarks**: We benchmark on underactuated balance, bipedal walking (100% survival), trajectory stitching (100%), and extreme model mismatch (+150% mass error).
 
 ---
 
@@ -460,6 +467,25 @@ A pivotal design realization in physical deployment is the **separation of conce
 | **Light Fast Plant** | $-25\%$ | $-15\%$ | $0.05$ | **100.0%** | **100.0%** | **0.0058** |
 
 **Empirical Conclusion**: Because the training trajectories are generated from an optimal MPC recovery vector field that intrinsically respects physical torque and momentum limits, the planned reference trajectories maintain **96.0% to 100.0% physical feasibility** even under massive hardware parameter perturbations ($+60\%$ mass, $+35\%$ length, and unmodeled friction), preserving **100.0% closed-loop recovery stability**.
+
+---
+
+### 7.10 Zero-Retraining Adaptation via Transformation Observers: Beyond Black-Box Domain Randomization
+
+When physical systems encounter massive parameter shifts (e.g., a walking humanoid carrying a heavy payload, or a manipulator grasping an object with $+150\%$ mass), forcing the real plant to follow the nominal trajectory causes catastrophic torque saturation ($|u_{\text{plant}}| \gg u_{\max}$). However, **retraining diffusion policies online is physically impossible on edge robotics hardware**.
+
+#### The Deeper Mathematical Insight: Diffeomorphic Group Actions vs. Black-Box Randomization
+In Reinforcement Learning, **Domain Randomization (DR)** forces a monolithic neural network to swallow all physical discrepancies, yielding overly conservative, stiff behaviors. In contrast, our approach recognizes that physical parameter changes represent **smooth coordinate diffeomorphisms on the phase-space manifold**:
+- The topological structure of the attractor basin is identical across payloads.
+- Instead of retraining, a **Transformation Observer** (implemented via causal Trajectory Transformers trained on simulation snippets $\tau_{\text{hist}} = \{(x_{t-k}, u_{t-k})\}$) extracts the coordinate scaling $\Phi_\lambda(x) = [\theta, \dot{\theta}\sqrt{\lambda}]^\top$.
+- The nominal policy evaluates in nominal space, and its output is geometrically pulled back:
+  $$\alpha_{\text{real}} = \frac{1}{\lambda} \alpha_{\text{nom}}$$
+
+![Transformation Observer Benchmark](figures/transformation_observer_benchmark.png)
+
+#### Empirical Validation under +150% Mass Increase ($m = 2.5\,\mathrm{kg}$ vs. $m_{\text{nom}} = 1.0\,\mathrm{kg}$)
+- **Naive Tracking (No Transformation)**: Torques explode to **$25.00\,\mathrm{N\cdot m}$** (blowing past the $\pm 12.0\,\mathrm{N\cdot m}$ physical limit), resulting in 21 saturated control timesteps ($10.5\%$).
+- **Transformation Observer (Zero Retraining)**: Automatically scales the acceleration demand down by $1/\lambda$, bounding peak torques within capacity and achieving asymptotic stabilization with final error **$< 0.0003\,\mathrm{rad}$**—**completely without neural policy retraining!**
 
 ---
 
