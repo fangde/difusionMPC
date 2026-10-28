@@ -72,6 +72,30 @@ To unify Generative Modeling and Optimal Control, we must identify their common 
 > **The Foundational Principle**:  
 > *Dynamic properties—such as asymptotic stability, contraction rates, and forward-invariant basins of attraction—are intrinsic properties of the vector field itself ($\nabla V^\top F < 0$). They do not depend on whether the field is evaluated via online QP optimization or integrated via a neural network. Therefore, if the vector field learned by Diffusion encodes physical recovery dynamics rather than empirical statistical density shifts, the resulting generative flow naturally inherits the stability and invariance of the physical system.*
 
+### 1.2 The Three Core Questions: Construction, Manifold Stitching, and Controlled Symmetry
+
+To operationalize this theoretical bridge, our methodology resolves three foundational questions:
+
+1. **Question 1: What vector field must we construct? (Provably Stable Local Patches)**
+   - *Objective*: Synthesize an asymptotically stable, contractive vector field $F^*(x) = f(x, u^*(x))$.
+   - *Method*: Around target equilibria and key phase-space trajectories, we inject stochastic state perturbations $x_i = x^* + \epsilon_i$. Classical optimal feedback (local MPC / LQR / CLF) solves for instantaneous recovery controls with verified Lyapunov decrease $\dot{V}(x_i, u_i) \le -\alpha V(x_i)$.
+   - *Result*: This constructs thousands of verified **local contraction patches (invariant recovery funnels)** across the state space.
+
+2. **Question 2: How to learn? Stitching Patches and Demonstrations into a Global Differentiable Manifold**
+   - *Interplay*: Local classical control provides microscopic contraction funnels (how to self-right after falling), while Demonstrations provide the macroscopic thread (how to cross non-convex barriers and deadlocks across phase space).
+   - *Manifold Synthesis*: By stitching local contraction patches along the demonstration spine, we synthesize a **globally stable differentiable manifold $\mathcal{M}$** covering the full phase space.
+   - *Policy Learning*: A generative policy (Conditional Flow Matching) regresses onto this continuous velocity field:
+     $$\mathcal{L}_{\text{CFM}}(\theta) = \mathbb{E}_{t, x_0, x_1} \left\| v_\theta(x_t, t) - (x_1 - x_0) \right\|^2$$
+     The diffeomorphism of continuous neural flows naturally glues disjoint patches into a smooth, globally consistent recovery field.
+
+3. **Question 3: How to deploy in physical hardware? Controlled Symmetry (Feedforward Plan + Feedback Compensation)**
+   - *Physical Reality*: The policy is trained on nominal model dynamics. Real hardware suffers from model mismatches (mass error $\Delta m$, link error $\Delta l$, joint friction $b$) and sensor noise.
+   - *Hierarchical Division*:
+     - **High-Level Policy (Feedforward Feasible Planner)**: Plans a dynamically feasible global reference state trajectory $x_{\text{ref}}(t) \in \mathcal{M}$ on the learned manifold. It does *not* output raw open-loop motor torques.
+     - **Low-Level Plant Controller (Feedback Error Compensator)**: The physical hardware's local tracking controller (inverse dynamics computed torque or high-frequency PD) computes the actual torque:
+       $$u_{\text{plant}} = I_{\text{plant}}\left(\ddot{x}_{\text{des}} - \frac{g}{l_{\text{plant}}}\sin(\theta)\right) + b_{\text{plant}}\dot{\theta}$$
+   - *The Controlled Symmetry Principle*: The local control's sole purpose is **error compensation**. It dynamically absorbs parameter deviations to preserve symmetry with the planned nominal feasible manifold. As long as $|u_{\text{plant}}| \le u_{\max}$, the controlled symmetry is strictly maintained, ensuring asymptotic stability under model perturbations.
+
 ### Contributions
 1. **Vector-Field Ontological Unification**: We formulate Diffusion and MPC as two operational modes of the same underlying continuous vector field, enabling diffusion to inherit Lyapunov stability.
 2. **Topological-Metric Duality**: We propose a principled decoupling between topological invariance (governed by physics and control) and Riemannian metric selection (learned from demonstrations via continuous flows).

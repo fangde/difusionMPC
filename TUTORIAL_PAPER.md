@@ -22,6 +22,56 @@
 
 ---
 
+### 一之二、三位一体方法论体系：构造、缝合与受控对称性落地
+
+这一体系围绕三个层层递进的本质问题展开：
+
+```
+       [问题一：构造稳定场]
+    传统控制 + 扰动采样 + 稳定性证明
+   ─────────────────────────────► 构造大量局部稳定恢复补丁 (Local Contraction Patches)
+                                                    │
+                                                    ▼
+                                           [问题二：缝合与流形学习]
+                                      Demonstration 作为全局缝合骨架
+                                     ─────────────────────────────► 缝合局部补丁，构造相平面全局稳定微分流形
+                                                                    Policy (Flow Matching) 学习全局流场
+                                                                                    │
+                                                                                    ▼
+                                                                           [问题三：落地部署]
+                                                                        Controlled Symmetry 分层控制
+                                                                       ─────────────────────────────► 
+                                                                       Policy 规划全局可行参考轨迹 (前馈规划)
+                                                                       Plant 底层逆动力学/PID (误差补偿维持对称性)
+```
+
+#### 1. 问题一：我们要构造什么样的 Vector Field？（局部可证明稳定的 Patch）
+- **目标**：构造一个具有严格李雅普诺夫单调收缩性与物理可行性的闭环向量场 $F^*(x) = f(x, u^*(x))$。
+- **手段**：利用传统控制器（如 MPC、LQR、Control Lyapunov Functions），在目标状态与关键相空间区域施加系统性随机扰动 $\tilde{x} = x + \epsilon$。
+- **收缩证明**：对每个采样扰动执行闭环控制，严格验证其满足李雅普诺夫下降条件 $\dot{V}(x, u) \le -\alpha V(x)$，并在规定时域内收敛回目标容差范围。
+- **输出**：在成千上万个局部状态点上，获得了经物理验证的**局部稳定收敛补丁（Local Stable Patches / Contraction Funnels）**。
+
+#### 2. 问题二：如何学习？解决 Model Guidance 与 Demonstration 的数据与增强方法（流形缝合）
+- **协同机制**：
+  - **传统控制（Model Guidance）** 负责向内收敛的微观恢复（Microscopic Recovery），回答“离开轨道后如何稳定拉回”；
+  - **Demonstration（示范轨迹）** 充当相平面上的全局缝合线（Global Thread），回答“如何从远离目标的奇异初始区域跨越长时域势垒与死锁”。
+- **微分流形构造**：将离散的局部 Patches 沿着 Demonstration 骨架拼织串联，在完整的相空间中构造出一个**全局稳定的微分流形（Globally Stable Differentiable Manifold $\mathcal{M}$）**。
+- **流匹配学习（Continuous Flow Matching）**：Policy 采用条件流匹配回归该流形上的连续概率速度场：
+  $$\mathcal{L}_{\mathrm{CFM}}(\theta) = \mathbb{E}_{t, x_0, x_1} \left\| v_\theta(x_t, t) - (x_1 - x_0) \right\|^2$$
+  神经网络的光滑拟合特性自然抹平了局部补丁之间的边界不连续性，形成一个能够独立外推且处处可微的全局恢复向量场。
+
+#### 3. 问题三：在落地部署时，如何实现 Controlled Symmetry（受控对称性与前馈-反馈分层）？
+- **物理现实**：Policy 在名义物理模型（Nominal Dynamics）上学到了完美的全局稳定流形。但在实物部署时，由于物理参数摄动（质量 $\Delta m$、摆长 $\Delta l$、未建模关节摩擦 $b$）以及传感器噪声，实际物理对象与名义模型必然存在失配。
+- **架构解耦**：
+  - **高层 Policy 充当“前馈式物理可行规划器”**：Policy **不直接开环输出底层电机的力矩 $u$**，而是根据当前状态，在学到的流形上规划出一条具有真实物理意义、内生动力学可行的全局参考状态轨迹 $x_{\mathrm{ref}}(t)$（作为前馈参考）。
+  - **底层 Plant 充当“受控对称性误差补偿器”**：物理硬件的局部控制器（逆动力学 Computed Torque 或高频 PID）根据实时实际参数与跟踪误差计算所需的控制力矩：
+    $$u_{\mathrm{plant}} = I_{\mathrm{plant}}\left(\ddot{x}_{\mathrm{des}} - \frac{g}{l_{\mathrm{plant}}}\sin(\theta)\right) + b_{\mathrm{plant}}\dot{\theta}$$
+- **Controlled Symmetry 的物理本质**：
+  - 控制的作用是**补偿误差（Error Compensation）**。底层控制器通过反馈注入抵抗物理偏差，使得摄动后的物理实体在宏观上表现出与 Policy 规划的 nominal 流形高度对称的运动学行为。
+  - **稳定性充要判据**：当且仅当补偿误差所需的力矩处于电机物理约束之内（$|u_{\mathrm{plant}}| \le u_{\max}$）时，受控对称性得以严格维持，系统在模型摄动下依然保持全局稳定！
+
+---
+
 ### 二、第一步：用 Demo 构造全局运动结构
 
 首先，获得从初始状态到目标的成功示范轨迹：
