@@ -16,3 +16,4 @@ venv/
 
 # Large demonstration datasets (can be re-generated via dataset_generator.py)
 # data/*.npy
+MUJOCO_LOG.TXT

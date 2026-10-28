@@ -1,0 +1,24 @@
+{
+  "payload_mass": 1.0,
+  "naive": {
+    "success": true,
+    "saturation_rate": 3.3846153846153846,
+    "chatter": 0.08501801949398756,
+    "peak_torque": 44.93468693586152,
+    "placement_error_mm": 29.261973110925076
+  },
+  "stiff": {
+    "success": true,
+    "saturation_rate": 21.23076923076923,
+    "chatter": 0.12028832393503947,
+    "peak_torque": 42.362348902639496,
+    "placement_error_mm": 22.97983862675744
+  },
+  "ours": {
+    "success": true,
+    "saturation_rate": 8.264462809917354,
+    "chatter": 0.035174759402530835,
+    "peak_torque": 40.26368902450133,
+    "placement_error_mm": 28.30564829755426
+  }
+}
