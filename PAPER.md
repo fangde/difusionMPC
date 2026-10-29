@@ -1,38 +1,37 @@
-# Model-Driven Diffusion: Replacing Statistics with Dynamics
+# MPC-Guided Recovery Diffusion: Expanding the Basin of Attraction for Dynamic Robot Systems
+
+**MPC-Guided Recovery Diffusion (MGRD) and Controlled Symmetry: A Unified Architecture for Real-Time, Multi-Modal, and Provably Stable Robot Control**
 
 **Authors**: Research Draft  
 **Target Venue**: IEEE Robotics and Automation Letters (RA-L) / Conference on Robot Learning (CoRL) / Learning for Dynamics & Control (L4DC)
 
 ---
 
-> ### Executive Manifesto: Generative Control Learning via Local MPC Vector Fields  
-> **（基于局部 MPC 向量场的生成式控制学习）**
+> ### Executive Manifesto: Basin of Attraction Expansion via Generative Recovery Fields
+> **（基于生成式恢复场的吸引域最大化拓展宣言）**
 >
-> The foundational thesis of this work resolves the fundamental dichotomy between Generative AI and Optimal Control:
+> The foundational thesis of this work resolves the fundamental dichotomy between Generative AI and Optimal Control by shifting the paradigm: **the primary objective of physical robot control is not to pursue fragile, computationally prohibitive global optimality, but to maximize and guarantee a broad, dynamically viable Basin of Attraction ($\mathcal{B}_{\text{attr}}$).**
 >
-> 1. **Diffusion's Superpower and Flaw**: Diffusion / Flow Matching guarantees **zero intrinsic physical stability**, but possesses **unmatched global capability**—naturally avoiding local energy traps, stitching non-contiguous trajectory fragments, and synthesizing multi-modal behaviors across long horizons.
-> 2. **MPC's Superpower and Flaw**: Classical MPC guarantees **rigorous local physical feasibility and Lyapunov contraction**, but is fundamentally **myopic (lacks globality)** due to finite horizons, easily deadlocking in underactuated swing-ups or cul-de-sacs, while suffering from prohibitive online iterative optimization latency ($20\text{--}80\,\mathrm{ms}$).
-> 3. **The Unifying Vector-Field Ontology**: Both physical control systems and continuous generative models operate fundamentally on **continuous vector fields** on the state manifold:
->    $$\dot{x} = F^*(x) = f(x, u^*(x)) \quad \longleftrightarrow \quad \frac{dx}{dt} = v_\theta(x, t)$$
->
-> **The Core Theoretical Invariance**:  
-> *If the vector field learned by Diffusion encodes genuine physical recovery dynamics rather than empirical statistical density shifts, then the resulting generative flow naturally inherits the stability, invariant basins, and contraction properties of the physical system. This is because dynamic stability is an intrinsic property of the vector field's geometry and Lie derivatives ($\nabla V^\top F < 0$), completely independent of whether that field was generated via online local QP optimization or neural diffusion integration!*
->
-> **The Engineering Vision: Breaking the Robotic Control Trilemma**:  
-> *Our overarching objective is to establish an architecture that simultaneously solves the foundational trilemma of real-world robotics engineering: **Real-Time Performance** ($< 0.1\,\mathrm{ms}$ at $1000\,\mathrm{Hz}$), **Adaptability** (robust invariance under severe model perturbations and unmodeled friction), and **Hard Stability** ($0.0\%$ constraint violations and provable Lyapunov contraction).*
+> 1. **MPC as a Local Viability Oracle**: Classical receding-horizon MPC guarantees strict local physical fidelity and Lyapunov contraction. In our framework, **MPC is liberated from providing global cost-to-go gradients or infinite-horizon optimality**; it simply serves as a local oracle discovering viable, contracting funnels that steer perturbed states back toward the nominal manifold under actuator limits.
+> 2. **Diffusion as a Non-Conservative Recovery Field Stitcher**: Flow matching and diffusion policies exhibit unmatched sub-millisecond inference ($< 0.1\,\mathrm{ms}$) and multimodal interpolation. **The generative model is liberated from fitting an exact curl-free gradient $\nabla V(x)$**; instead, it parameterizes a general **continuous Recovery Vector Field** on the phase space. Because physical closed-loop dynamics inherently incorporate gyroscopic, centrifugal, and non-conservative rotational forces, enforcing a scalar gradient field is both unnatural and restrictive.
+> 3. **Multimodality as a Fundamental Strength**: Under severe disturbances, multiple symmetric recovery behaviors exist (e.g., swinging clockwise vs. counter-clockwise, or circumventing obstacles to the left vs. right). In classical optimal control, these bifurcations represent non-differentiable singularity surfaces where deterministic regression collapses into zero-torque deadlock ($E[u|x] \approx 0$). **Generative diffusion naturally preserves distinct recovery modes without destructive averaging.**
+> 4. **Physical Expansion Pipeline & Verifiable Boundary**:
+>    $$\boxed{ \text{Demo Spine} \xrightarrow{\text{Tube Perturbations}} \text{Local Viable MPC} \xrightarrow{\text{Manifold Stitching}} \text{Generative Recovery Policy (MGRD)} }$$
+>    The optimization objective directly targets the measure of the closed-loop controllable invariant basin:
+>    $$\max_\theta \operatorname{Vol}\left( \mathcal{B}(\pi_\theta) \right) = \max_\theta \mathbb{E}_{x_0 \sim \mathcal{D}_{\text{shock}}} \left[ \mathbf{1}_{\{ x_0 \in \mathcal{B}(\pi_\theta) \}} \right] \quad \text{s.t. } \dot{x} = f(x, \pi_\theta(x)), \; \pi_\theta \in \mathcal{U}, \; x(t) \in \mathcal{X}_{\text{safe}}$$
+>    **Crucial Theoretical Principle**: Diffusion does not magically conjure basin expansion out of thin air. Genuine expansion is unlocked by seeding MPC viability queries across off-demonstration tubes, stitched continuously into a global vector field via Flow Matching, and certified through **closed-loop Monte Carlo stress testing and active failure-boundary mining (DAgger-style)**.
 
 ---
 
 ## Abstract
 Generative models, notably Denoising Diffusion Probabilistic Models (DDPM) and Continuous Normalizing Flows via Flow Matching (CFM), have demonstrated remarkable efficacy in robot imitation learning and trajectory generation. However, both paradigms fundamentally treat policy learning as statistical conditioning over demonstrations: their velocity and score fields regress onto empirical averages of offline data. When applied to dynamically constrained and underactuated systems—such as an underactuated double pendulum with a single motor actuator—statistical interpolation routinely violates non-holonomic constraints and equations of motion, leading to control failure under perturbations. 
 
-Crucially, **stability is not an isolated 1-dimensional trajectory; it is an open topological neighborhood (invariant set and basin of attraction)**. In this work, we propose **Model-Driven Diffusion**, decoupling generative control into a principled division of labor:
-1. **Forward Invariant Stability Set**: A physics-grounded Lyapunov or Control Barrier Function (CBF) defines the stable state sub-level set $\mathcal{S} = \{x \mid V(x) \le c\}$ and the admissible invariant control set $\mathcal{U}_{\text{stable}}(x) = \{u \mid \dot{V}(x, u) \le -\alpha V(x)\}$, guaranteeing contraction toward the target attractor.
-2. **Generative Policy Prior**: Conditioning on this stable invariant manifold, a diffusion or flow matching network learns the task-specific policy $p_\theta(u \mid x, c)$ capturing multi-modal paths, global planning, and style from offline demonstrations.
-3. **Closed-Form Minimum-Intervention Projection**: When a sampled candidate action $u_{\text{gen}}$ threatens the invariant boundary, it is projected in closed form onto the admissible half-space:
-   $$u^* = \arg\min_{u \in \mathcal{U}_{\text{stable}}(x)} \|u - u_{\text{gen}}\|^2$$
+Crucially, **stability is not an isolated 1-dimensional trajectory; it is an open topological neighborhood (the invariant basin of attraction)**. In this work, we propose **MPC-Guided Recovery Diffusion (MGRD)**, an architecture that reframes generative policy learning around the explicit expansion of the system's controllable basin of attraction. MGRD decouples control synthesis into three synergistic pillars:
+1. **Local Viable Funnels via MPC**: Bypassing the need for global value function solutions, we apply Riemannian tube perturbations around demonstration backbones and query short-horizon MPC to discover dynamically feasible, contracting recovery vectors under actuator saturation limits.
+2. **Generative Recovery Field Stitching**: A conditional flow matching network stitches these scattered local recovery funnels into a globally smooth, continuous recovery vector field. Crucially, MGRD naturally preserves multimodal recovery strategies without suffering from deterministic regression averaging.
+3. **Controlled Symmetry & Closed-Loop Basin Certification**: High-level MGRD plans dynamically feasible reference states at 10 kHz inference speeds ($< 0.1\,\mathrm{ms}$ latency), while low-level inverse dynamics enforce error compensation to maintain the system's dynamic symmetry. Active mining along the empirical recovery boundary iteratively expands the verified basin of attraction.
 
-We establish a unified framework comparing: (1) Pure MPC, (2) Deterministic Behavioral Cloning (BC), (3) Pure Flow Matching (CFM), and (4) Flow Matching + Lyapunov/CBF Invariant Filter (Model-Guided Diffusion, Ours). Empirical Monte Carlo benchmarks demonstrate that Model-Guided Diffusion eliminates invariant violations to 0.0%, runs 1.7x faster than online receding-horizon MPC, and retains generative multi-modality.
+We evaluate MGRD across underactuated non-linear double pendulums, dynamic bipedal walking, and extreme out-of-distribution shocks ($\sigma=0.95$). MGRD achieves a **98.3% recovery success rate** under severe disturbances (outperforming behavioral cloning by +3.3% and matching online MPC), eliminates Lyapunov violations to **0.0%**, and executes **1.7x faster than online QP-based MPC**, unlocking a robust, real-time foundation for physical robot autonomy.
 
 ---
 

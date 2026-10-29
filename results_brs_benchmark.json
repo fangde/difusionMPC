@@ -1,0 +1,47 @@
+{
+  "Group A (Uniform Random + MPC)": {
+    "Sampling": "Uniform Phase Space",
+    "Policy": "Online MPC",
+    "MPC Queries": 1200,
+    "Discovered Safe States": 212,
+    "MPC Yield Rate (%)": 17.666666666666668,
+    "Basin B* Coverage (%)": 100.0,
+    "Closed-Loop Stability (%)": 100.0
+  },
+  "Group B (Reverse Random Walk + MPC)": {
+    "Sampling": "Backward Dynamics Walk (Florensa)",
+    "Policy": "Online MPC",
+    "MPC Queries": 1200,
+    "Discovered Safe States": 1201,
+    "MPC Yield Rate (%)": 100.08333333333333,
+    "Basin B* Coverage (%)": 35.14492753623188,
+    "Closed-Loop Stability (%)": 100.0
+  },
+  "Group C (BRS Active Boundary + MPC)": {
+    "Sampling": "Backward Recovery Sampling (Ours)",
+    "Policy": "Online MPC",
+    "MPC Queries": 1200,
+    "Discovered Safe States": 1201,
+    "MPC Yield Rate (%)": 100.08333333333333,
+    "Basin B* Coverage (%)": 38.405797101449274,
+    "Closed-Loop Stability (%)": 100.0
+  },
+  "Group D (BRS + Deterministic BC)": {
+    "Sampling": "Backward Recovery Sampling",
+    "Policy": "Distilled MLP (BC)",
+    "MPC Queries": 1200,
+    "Discovered Safe States": 1201,
+    "MPC Yield Rate (%)": 100.08333333333333,
+    "Basin B* Coverage (%)": 38.405797101449274,
+    "Closed-Loop Stability (%)": 100.0
+  },
+  "Group E (BRS + Recovery Diffusion MGRD)": {
+    "Sampling": "Backward Recovery Sampling",
+    "Policy": "Generative Flow Matching",
+    "MPC Queries": 1200,
+    "Discovered Safe States": 1201,
+    "MPC Yield Rate (%)": 100.08333333333333,
+    "Basin B* Coverage (%)": 38.405797101449274,
+    "Closed-Loop Stability (%)": 100.0
+  }
+}

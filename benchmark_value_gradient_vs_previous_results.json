@@ -1,0 +1,134 @@
+{
+  "Online MPC (Oracle)": {
+    "Small (sigma=0.25)": {
+      "success_rate": 100.0,
+      "avg_cost": 126.89942919796013,
+      "latency_ms": 0.040458909837373845
+    },
+    "Medium (sigma=0.45)": {
+      "success_rate": 100.0,
+      "avg_cost": 453.4128727098867,
+      "latency_ms": 0.045979841250098415
+    },
+    "Large (sigma=0.70)": {
+      "success_rate": 96.66666666666667,
+      "avg_cost": 1236.433666733077,
+      "latency_ms": 0.07152474289695318
+    },
+    "Extreme OOD (sigma=0.95)": {
+      "success_rate": 98.33333333333333,
+      "avg_cost": 1949.41526821939,
+      "latency_ms": 0.07689405986001487
+    }
+  },
+  "Prev Impl: Action CFM (Flow Matching)": {
+    "Small (sigma=0.25)": {
+      "success_rate": 100.0,
+      "avg_cost": 145.5056177734329,
+      "latency_ms": 0.10976437864074898
+    },
+    "Medium (sigma=0.45)": {
+      "success_rate": 100.0,
+      "avg_cost": 472.54014594550165,
+      "latency_ms": 0.09833643195128793
+    },
+    "Large (sigma=0.70)": {
+      "success_rate": 95.0,
+      "avg_cost": 1100.580439033556,
+      "latency_ms": 0.09924387187412423
+    },
+    "Extreme OOD (sigma=0.95)": {
+      "success_rate": 98.33333333333333,
+      "avg_cost": 1968.7167851263046,
+      "latency_ms": 0.0980314788965532
+    }
+  },
+  "Prev Impl: Action BC (Direct Regression)": {
+    "Small (sigma=0.25)": {
+      "success_rate": 100.0,
+      "avg_cost": 127.34991114986141,
+      "latency_ms": 0.019530019619398646
+    },
+    "Medium (sigma=0.45)": {
+      "success_rate": 100.0,
+      "avg_cost": 455.1336767269649,
+      "latency_ms": 0.019264835088203352
+    },
+    "Large (sigma=0.70)": {
+      "success_rate": 93.33333333333333,
+      "avg_cost": 967.1297926017908,
+      "latency_ms": 0.01888418151568317
+    },
+    "Extreme OOD (sigma=0.95)": {
+      "success_rate": 95.0,
+      "avg_cost": 1770.464635645815,
+      "latency_ms": 0.019131028438156988
+    }
+  },
+  "New: Free Gradient Field (MLP -> nabla V)": {
+    "Small (sigma=0.25)": {
+      "success_rate": 100.0,
+      "avg_cost": 254.46356393895056,
+      "latency_ms": 0.020269678643671796
+    },
+    "Medium (sigma=0.45)": {
+      "success_rate": 100.0,
+      "avg_cost": 633.8078568977968,
+      "latency_ms": 0.020184240404180147
+    },
+    "Large (sigma=0.70)": {
+      "success_rate": 98.33333333333333,
+      "avg_cost": 1572.1217241579905,
+      "latency_ms": 0.020143800825786054
+    },
+    "Extreme OOD (sigma=0.95)": {
+      "success_rate": 98.33333333333333,
+      "avg_cost": 2181.9349619708332,
+      "latency_ms": 0.020036243617518875
+    }
+  },
+  "New: Exact Potential Field (V -> nabla V)": {
+    "Small (sigma=0.25)": {
+      "success_rate": 100.0,
+      "avg_cost": 231.19303870734043,
+      "latency_ms": 0.04934682341020865
+    },
+    "Medium (sigma=0.45)": {
+      "success_rate": 100.0,
+      "avg_cost": 608.4876517886713,
+      "latency_ms": 0.04950792449461813
+    },
+    "Large (sigma=0.70)": {
+      "success_rate": 95.0,
+      "avg_cost": 1257.0116551542683,
+      "latency_ms": 0.048568218383782856
+    },
+    "Extreme OOD (sigma=0.95)": {
+      "success_rate": 98.33333333333333,
+      "avg_cost": 2127.596985924864,
+      "latency_ms": 0.04886561299954004
+    }
+  },
+  "New: ODE Trajectory Rollout + Tracking": {
+    "Small (sigma=0.25)": {
+      "success_rate": 100.0,
+      "avg_cost": 234.4952571896004,
+      "latency_ms": 0.6428099638368521
+    },
+    "Medium (sigma=0.45)": {
+      "success_rate": 100.0,
+      "avg_cost": 613.6125967571556,
+      "latency_ms": 0.6412577113789868
+    },
+    "Large (sigma=0.70)": {
+      "success_rate": 95.0,
+      "avg_cost": 1265.3491842048925,
+      "latency_ms": 0.632163682150551
+    },
+    "Extreme OOD (sigma=0.95)": {
+      "success_rate": 98.33333333333333,
+      "avg_cost": 2137.3834544755673,
+      "latency_ms": 0.63252931694554
+    }
+  }
+}

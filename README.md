@@ -1,4 +1,6 @@
-# Model-Driven Diffusion: Replacing Statistics with Dynamics
+# MPC-Guided Recovery Diffusion: Expanding the Basin of Attraction for Dynamic Systems
+
+**MPC-Guided Recovery Diffusion (MGRD)**: A Unified Architecture for Real-Time, Multi-Modal, and Stable Robot Control via Generative Manifold Stitching.
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Paper%20Site-blue?logo=github)](https://fangde.github.io/difusionMPC/)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
@@ -7,20 +9,25 @@
 
 > **Paper Draft & Project Website**: [https://fangde.github.io/difusionMPC/](https://fangde.github.io/difusionMPC/)  
 > **Interactive HTML Experiment Report**: [experiment_report.html](https://fangde.github.io/difusionMPC/experiment_report.html)  
-> **Full Paper Draft (Markdown)**: [PAPER.md](PAPER.md)  
+> **Full Paper Draft (English)**: [PAPER.md](PAPER.md)  
+> **Full Paper Draft (Chinese)**: [PAPER_ZH.md](PAPER_ZH.md)  
 > **Tutorial Paper & Code Guide**: [TUTORIAL_PAPER.md](TUTORIAL_PAPER.md)
 
 ---
 
 ## 📖 Overview
 
-Generative models (such as **Diffusion Policies** and **Flow Matching Policies**) are widely used in robotics imitation learning. However, both paradigms fundamentally rely on statistical conditioning: their velocity and score fields regress onto empirical averages of offline demonstrations.
+Generative policies (such as **Diffusion Policies** and **Continuous Flow Matching**) have demonstrated impressive dexterity in robot imitation learning. However, both paradigms fundamentally rely on empirical demonstration statistics: when applied to **underactuated, dynamically constrained physical systems**, statistical interpolation across non-convex sets routinely violates equations of motion.
 
-When applied to **underactuated, dynamically constrained physical systems** (such as an underactuated double pendulum with only one motor actuator), statistical interpolation routinely violates equations of motion.
+Crucially, **dynamic stability is not an isolated 1-dimensional trajectory; it is an open topological neighborhood—the invariant Basin of Attraction ($\mathcal{B}_{\text{attr}}$)**.
 
-**Model-Driven Diffusion** replaces empirical demonstration statistics with physical Model Predictive Control (MPC) and Hamiltonian costate descent directly in the continuous vector field:
+**MPC-Guided Recovery Diffusion (MGRD)** shifts the paradigm from fragile global optimal control to the systematic **expansion of the system's controllable basin of attraction**:
 
-$$\mathbf{v}_{MPC}(x) = f(x, u^*_{MPC}(x))$$
+$$\boxed{ \text{Demonstration Spine} \xrightarrow{\text{Tube Perturbations}} \text{Local Viability MPC} \xrightarrow{\text{Manifold Stitching}} \text{Generative Recovery Policy (MGRD)} }$$
+
+1. **MPC as a Local Viability Oracle**: Solves short-horizon QP/SQPs to discover dynamically feasible, contracting recovery vectors that guide states back to the target manifold under actuator saturation.
+2. **Diffusion as a Manifold Stitcher**: Stitches scattered local recovery funnels into a continuous recovery vector field, capturing multimodal recovery paths (e.g., swinging left vs. right) without unphysical averaging.
+3. **Controlled Symmetry & Closed-Loop Certification**: High-level MGRD generates dynamically feasible reference paths at $10\,\mathrm{kHz}$ ($< 0.1\,\mathrm{ms}$), while low-level feedback preserves dynamic symmetry. Active boundary failure mining systematically expands the verified basin.
 
 ```
                          [Perturbed State x_pert]

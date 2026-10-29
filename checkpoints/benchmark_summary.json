@@ -1,0 +1,14 @@
+{
+    "Pure_DDPM": {
+        "success": 100,
+        "tumble_loss": 0
+    },
+    "Pure_CFM": {
+        "success": 100,
+        "tumble_loss": 0
+    },
+    "Model_Guided_Diffusion (Ours)": {
+        "success": 100,
+        "tumble_loss": 0
+    }
+}

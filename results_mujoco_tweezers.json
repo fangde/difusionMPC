@@ -1,0 +1,22 @@
+{
+  "naive": {
+    "peak_slip_ratio": 1.0000000000000002,
+    "max_slip_mm": 13.953345640652122,
+    "dropped": true
+  },
+  "feasible": {
+    "peak_slip_ratio": 1.0,
+    "max_slip_mm": 10.371318151838496,
+    "dropped": true
+  },
+  "dynamic_symmetry": {
+    "peak_slip_ratio": 0.6034015588353079,
+    "max_slip_mm": 2.5470207131244975,
+    "dropped": false
+  },
+  "fragile_pullback": {
+    "peak_slip_ratio": 0.6189980804332241,
+    "max_slip_mm": 2.0595350981899987,
+    "dropped": false
+  }
+}

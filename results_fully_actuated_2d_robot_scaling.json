@@ -1,0 +1,298 @@
+{
+  "budgets": [
+    1000,
+    2000,
+    3000,
+    4000,
+    5000,
+    6000,
+    7000,
+    8000,
+    9000,
+    10000
+  ],
+  "metrics_A_uniform": [
+    {
+      "n_safe": 224,
+      "n_elbow_up": 98,
+      "n_elbow_down": 115,
+      "balance": 0.92018779342723,
+      "vol_4d": 136.9201202392578,
+      "budget": 1000,
+      "yield_rate": 0.224
+    },
+    {
+      "n_safe": 421,
+      "n_elbow_up": 204,
+      "n_elbow_down": 196,
+      "balance": 0.98,
+      "vol_4d": 140.69000244140625,
+      "budget": 2000,
+      "yield_rate": 0.2105
+    },
+    {
+      "n_safe": 621,
+      "n_elbow_up": 309,
+      "n_elbow_down": 286,
+      "balance": 0.9613445378151261,
+      "vol_4d": 141.2797393798828,
+      "budget": 3000,
+      "yield_rate": 0.207
+    },
+    {
+      "n_safe": 820,
+      "n_elbow_up": 411,
+      "n_elbow_down": 377,
+      "balance": 0.9568527918781726,
+      "vol_4d": 141.44239807128906,
+      "budget": 4000,
+      "yield_rate": 0.205
+    },
+    {
+      "n_safe": 1029,
+      "n_elbow_up": 513,
+      "n_elbow_down": 479,
+      "balance": 0.9657258064516129,
+      "vol_4d": 142.1002655029297,
+      "budget": 5000,
+      "yield_rate": 0.2058
+    },
+    {
+      "n_safe": 1229,
+      "n_elbow_up": 605,
+      "n_elbow_down": 576,
+      "balance": 0.9754445385266723,
+      "vol_4d": 142.1002655029297,
+      "budget": 6000,
+      "yield_rate": 0.20483333333333334
+    },
+    {
+      "n_safe": 1416,
+      "n_elbow_up": 692,
+      "n_elbow_down": 668,
+      "balance": 0.9823529411764705,
+      "vol_4d": 142.60354614257812,
+      "budget": 7000,
+      "yield_rate": 0.2022857142857143
+    },
+    {
+      "n_safe": 1617,
+      "n_elbow_up": 786,
+      "n_elbow_down": 764,
+      "balance": 0.9858064516129033,
+      "vol_4d": 142.958740234375,
+      "budget": 8000,
+      "yield_rate": 0.202125
+    },
+    {
+      "n_safe": 1822,
+      "n_elbow_up": 890,
+      "n_elbow_down": 857,
+      "balance": 0.9811104751001717,
+      "vol_4d": 142.958740234375,
+      "budget": 9000,
+      "yield_rate": 0.20244444444444445
+    },
+    {
+      "n_safe": 2021,
+      "n_elbow_up": 980,
+      "n_elbow_down": 962,
+      "balance": 0.9907312049433573,
+      "vol_4d": 143.3899383544922,
+      "budget": 10000,
+      "yield_rate": 0.2021
+    }
+  ],
+  "metrics_B_florensa": [
+    {
+      "n_safe": 897,
+      "n_elbow_up": 375,
+      "n_elbow_down": 364,
+      "balance": 0.9851150202976996,
+      "vol_4d": 43.27006912231445,
+      "budget": 1000,
+      "yield_rate": 0.897
+    },
+    {
+      "n_safe": 1771,
+      "n_elbow_up": 751,
+      "n_elbow_down": 749,
+      "balance": 0.9986666666666667,
+      "vol_4d": 146.10577392578125,
+      "budget": 2000,
+      "yield_rate": 0.8855
+    },
+    {
+      "n_safe": 2303,
+      "n_elbow_up": 1001,
+      "n_elbow_down": 985,
+      "balance": 0.9919436052366566,
+      "vol_4d": 1332.625732421875,
+      "budget": 3000,
+      "yield_rate": 0.7676666666666667
+    },
+    {
+      "n_safe": 3131,
+      "n_elbow_up": 1359,
+      "n_elbow_down": 1361,
+      "balance": 0.9992647058823529,
+      "vol_4d": 1508.4259033203125,
+      "budget": 4000,
+      "yield_rate": 0.78275
+    },
+    {
+      "n_safe": 3857,
+      "n_elbow_up": 1679,
+      "n_elbow_down": 1691,
+      "balance": 0.9964391691394658,
+      "vol_4d": 2868.615234375,
+      "budget": 5000,
+      "yield_rate": 0.7714
+    },
+    {
+      "n_safe": 4428,
+      "n_elbow_up": 1927,
+      "n_elbow_down": 1951,
+      "balance": 0.9938112429087158,
+      "vol_4d": 8947.666015625,
+      "budget": 6000,
+      "yield_rate": 0.738
+    },
+    {
+      "n_safe": 5230,
+      "n_elbow_up": 2309,
+      "n_elbow_down": 2278,
+      "balance": 0.9932417702201874,
+      "vol_4d": 9744.69140625,
+      "budget": 7000,
+      "yield_rate": 0.7471428571428571
+    },
+    {
+      "n_safe": 5809,
+      "n_elbow_up": 2543,
+      "n_elbow_down": 2552,
+      "balance": 0.998233562315996,
+      "vol_4d": 16502.451171875,
+      "budget": 8000,
+      "yield_rate": 0.726125
+    },
+    {
+      "n_safe": 6523,
+      "n_elbow_up": 2859,
+      "n_elbow_down": 2876,
+      "balance": 0.9970357454228422,
+      "vol_4d": 16502.451171875,
+      "budget": 9000,
+      "yield_rate": 0.7247777777777777
+    },
+    {
+      "n_safe": 7193,
+      "n_elbow_up": 3152,
+      "n_elbow_down": 3195,
+      "balance": 0.993225145738144,
+      "vol_4d": 17034.224609375,
+      "budget": 10000,
+      "yield_rate": 0.7193
+    }
+  ],
+  "metrics_C_brs": [
+    {
+      "n_safe": 893,
+      "n_elbow_up": 368,
+      "n_elbow_down": 399,
+      "balance": 0.9595827900912647,
+      "vol_4d": 42.268863677978516,
+      "budget": 1000,
+      "yield_rate": 0.893
+    },
+    {
+      "n_safe": 1556,
+      "n_elbow_up": 640,
+      "n_elbow_down": 696,
+      "balance": 0.9580838323353293,
+      "vol_4d": 441.56524658203125,
+      "budget": 2000,
+      "yield_rate": 0.778
+    },
+    {
+      "n_safe": 2091,
+      "n_elbow_up": 891,
+      "n_elbow_down": 919,
+      "balance": 0.9845303867403314,
+      "vol_4d": 716.1377563476562,
+      "budget": 3000,
+      "yield_rate": 0.697
+    },
+    {
+      "n_safe": 2608,
+      "n_elbow_up": 1114,
+      "n_elbow_down": 1135,
+      "balance": 0.9906625166740773,
+      "vol_4d": 2002.9136962890625,
+      "budget": 4000,
+      "yield_rate": 0.652
+    },
+    {
+      "n_safe": 3059,
+      "n_elbow_up": 1319,
+      "n_elbow_down": 1328,
+      "balance": 0.9965999244427654,
+      "vol_4d": 5786.5498046875,
+      "budget": 5000,
+      "yield_rate": 0.6118
+    },
+    {
+      "n_safe": 3523,
+      "n_elbow_up": 1516,
+      "n_elbow_down": 1537,
+      "balance": 0.9931215198165738,
+      "vol_4d": 21745.943359375,
+      "budget": 6000,
+      "yield_rate": 0.5871666666666666
+    },
+    {
+      "n_safe": 3986,
+      "n_elbow_up": 1718,
+      "n_elbow_down": 1735,
+      "balance": 0.9950767448595425,
+      "vol_4d": 25115.447265625,
+      "budget": 7000,
+      "yield_rate": 0.5694285714285714
+    },
+    {
+      "n_safe": 4494,
+      "n_elbow_up": 1936,
+      "n_elbow_down": 1978,
+      "balance": 0.9892692897291773,
+      "vol_4d": 39694.34375,
+      "budget": 8000,
+      "yield_rate": 0.56175
+    },
+    {
+      "n_safe": 4966,
+      "n_elbow_up": 2167,
+      "n_elbow_down": 2177,
+      "balance": 0.9976979742173112,
+      "vol_4d": 40032.40625,
+      "budget": 9000,
+      "yield_rate": 0.5517777777777778
+    },
+    {
+      "n_safe": 5434,
+      "n_elbow_up": 2363,
+      "n_elbow_down": 2399,
+      "balance": 0.992440151196976,
+      "vol_4d": 47958.30859375,
+      "budget": 10000,
+      "yield_rate": 0.5434
+    }
+  ],
+  "closed_loop_eval": {
+    "bc_success": 98,
+    "bc_collisions": 2,
+    "cfm_success": 94,
+    "cfm_collisions": 6,
+    "cfm_elbow_up_count": 48,
+    "cfm_elbow_down_count": 46
+  }
+}

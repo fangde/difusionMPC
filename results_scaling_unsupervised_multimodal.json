@@ -1,0 +1,290 @@
+{
+  "budgets": [
+    1000,
+    2000,
+    3000,
+    4000,
+    5000,
+    6000,
+    7000,
+    8000,
+    9000,
+    10000
+  ],
+  "method_A": [
+    {
+      "n_shadow": 133,
+      "n_up": 69,
+      "n_down": 64,
+      "balance": 0.9624060150375939,
+      "coverage_pct": 86.5,
+      "total_safe": 928,
+      "yield_pct": 92.80000000000001
+    },
+    {
+      "n_shadow": 256,
+      "n_up": 132,
+      "n_down": 124,
+      "balance": 0.96875,
+      "coverage_pct": 92.25,
+      "total_safe": 1839,
+      "yield_pct": 91.95
+    },
+    {
+      "n_shadow": 373,
+      "n_up": 190,
+      "n_down": 183,
+      "balance": 0.9812332439678284,
+      "coverage_pct": 93.5,
+      "total_safe": 2751,
+      "yield_pct": 91.7
+    },
+    {
+      "n_shadow": 502,
+      "n_up": 253,
+      "n_down": 249,
+      "balance": 0.9920318725099602,
+      "coverage_pct": 94.25,
+      "total_safe": 3664,
+      "yield_pct": 91.60000000000001
+    },
+    {
+      "n_shadow": 625,
+      "n_up": 311,
+      "n_down": 314,
+      "balance": 0.9952,
+      "coverage_pct": 94.75,
+      "total_safe": 4595,
+      "yield_pct": 91.9
+    },
+    {
+      "n_shadow": 749,
+      "n_up": 375,
+      "n_down": 374,
+      "balance": 0.9986648865153538,
+      "coverage_pct": 94.75,
+      "total_safe": 5513,
+      "yield_pct": 91.88333333333333
+    },
+    {
+      "n_shadow": 876,
+      "n_up": 441,
+      "n_down": 435,
+      "balance": 0.9931506849315068,
+      "coverage_pct": 95.0,
+      "total_safe": 6425,
+      "yield_pct": 91.78571428571428
+    },
+    {
+      "n_shadow": 1009,
+      "n_up": 508,
+      "n_down": 501,
+      "balance": 0.9930624380574826,
+      "coverage_pct": 95.0,
+      "total_safe": 7334,
+      "yield_pct": 91.675
+    },
+    {
+      "n_shadow": 1148,
+      "n_up": 580,
+      "n_down": 568,
+      "balance": 0.9895470383275261,
+      "coverage_pct": 95.0,
+      "total_safe": 8253,
+      "yield_pct": 91.7
+    },
+    {
+      "n_shadow": 1273,
+      "n_up": 654,
+      "n_down": 619,
+      "balance": 0.9725058915946583,
+      "coverage_pct": 95.0,
+      "total_safe": 9168,
+      "yield_pct": 91.67999999999999
+    }
+  ],
+  "method_B": [
+    {
+      "n_shadow": 8,
+      "n_up": 2,
+      "n_down": 6,
+      "balance": 0.5,
+      "coverage_pct": 52.5,
+      "total_safe": 933,
+      "yield_pct": 93.30000000000001
+    },
+    {
+      "n_shadow": 22,
+      "n_up": 8,
+      "n_down": 14,
+      "balance": 0.7272727272727273,
+      "coverage_pct": 69.75,
+      "total_safe": 1900,
+      "yield_pct": 95.0
+    },
+    {
+      "n_shadow": 31,
+      "n_up": 13,
+      "n_down": 18,
+      "balance": 0.8387096774193549,
+      "coverage_pct": 77.0,
+      "total_safe": 2880,
+      "yield_pct": 96.0
+    },
+    {
+      "n_shadow": 40,
+      "n_up": 20,
+      "n_down": 20,
+      "balance": 1.0,
+      "coverage_pct": 78.5,
+      "total_safe": 3876,
+      "yield_pct": 96.89999999999999
+    },
+    {
+      "n_shadow": 42,
+      "n_up": 21,
+      "n_down": 21,
+      "balance": 1.0,
+      "coverage_pct": 79.25,
+      "total_safe": 4872,
+      "yield_pct": 97.44
+    },
+    {
+      "n_shadow": 45,
+      "n_up": 23,
+      "n_down": 22,
+      "balance": 0.9777777777777777,
+      "coverage_pct": 79.75,
+      "total_safe": 5871,
+      "yield_pct": 97.85000000000001
+    },
+    {
+      "n_shadow": 46,
+      "n_up": 24,
+      "n_down": 22,
+      "balance": 0.9565217391304348,
+      "coverage_pct": 79.75,
+      "total_safe": 6870,
+      "yield_pct": 98.14285714285714
+    },
+    {
+      "n_shadow": 46,
+      "n_up": 24,
+      "n_down": 22,
+      "balance": 0.9565217391304348,
+      "coverage_pct": 79.75,
+      "total_safe": 7870,
+      "yield_pct": 98.375
+    },
+    {
+      "n_shadow": 46,
+      "n_up": 24,
+      "n_down": 22,
+      "balance": 0.9565217391304348,
+      "coverage_pct": 79.75,
+      "total_safe": 8870,
+      "yield_pct": 98.55555555555556
+    },
+    {
+      "n_shadow": 47,
+      "n_up": 25,
+      "n_down": 22,
+      "balance": 0.9361702127659575,
+      "coverage_pct": 80.0,
+      "total_safe": 9870,
+      "yield_pct": 98.7
+    }
+  ],
+  "method_C": [
+    {
+      "n_shadow": 5,
+      "n_up": 3,
+      "n_down": 2,
+      "balance": 0.8,
+      "coverage_pct": 54.25,
+      "total_safe": 936,
+      "yield_pct": 93.60000000000001
+    },
+    {
+      "n_shadow": 66,
+      "n_up": 37,
+      "n_down": 29,
+      "balance": 0.8787878787878788,
+      "coverage_pct": 81.75,
+      "total_safe": 1739,
+      "yield_pct": 86.95
+    },
+    {
+      "n_shadow": 135,
+      "n_up": 78,
+      "n_down": 57,
+      "balance": 0.8444444444444444,
+      "coverage_pct": 88.75,
+      "total_safe": 2632,
+      "yield_pct": 87.73333333333333
+    },
+    {
+      "n_shadow": 213,
+      "n_up": 123,
+      "n_down": 90,
+      "balance": 0.8450704225352113,
+      "coverage_pct": 91.75,
+      "total_safe": 3558,
+      "yield_pct": 88.94999999999999
+    },
+    {
+      "n_shadow": 294,
+      "n_up": 168,
+      "n_down": 126,
+      "balance": 0.8571428571428571,
+      "coverage_pct": 93.0,
+      "total_safe": 4516,
+      "yield_pct": 90.32
+    },
+    {
+      "n_shadow": 395,
+      "n_up": 219,
+      "n_down": 176,
+      "balance": 0.8911392405063291,
+      "coverage_pct": 93.75,
+      "total_safe": 5439,
+      "yield_pct": 90.64999999999999
+    },
+    {
+      "n_shadow": 490,
+      "n_up": 261,
+      "n_down": 229,
+      "balance": 0.9346938775510204,
+      "coverage_pct": 94.25,
+      "total_safe": 6358,
+      "yield_pct": 90.82857142857142
+    },
+    {
+      "n_shadow": 589,
+      "n_up": 306,
+      "n_down": 283,
+      "balance": 0.9609507640067911,
+      "coverage_pct": 94.25,
+      "total_safe": 7267,
+      "yield_pct": 90.8375
+    },
+    {
+      "n_shadow": 694,
+      "n_up": 356,
+      "n_down": 338,
+      "balance": 0.9740634005763689,
+      "coverage_pct": 94.25,
+      "total_safe": 8175,
+      "yield_pct": 90.83333333333333
+    },
+    {
+      "n_shadow": 803,
+      "n_up": 410,
+      "n_down": 393,
+      "balance": 0.9788293897882939,
+      "coverage_pct": 94.5,
+      "total_safe": 9103,
+      "yield_pct": 91.03
+    }
+  ]
+}
