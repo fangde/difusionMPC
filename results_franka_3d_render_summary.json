@@ -1,0 +1,55 @@
+{
+  "target_ee_position": [
+    0.30701957005161024,
+    4.246272246536378e-18,
+    0.5902695582766444
+  ],
+  "selected_trajectories": [
+    {
+      "id": 1,
+      "name": "Traj 1: Swivel Left Extreme",
+      "swivel_angle_deg": -13.348166650792852,
+      "position_error_mm": 9.936937239457662e-05,
+      "rotation_error_deg": 1.2547858734911261e-05,
+      "color": "#0077b6"
+    },
+    {
+      "id": 2,
+      "name": "Traj 2: Swivel Left Moderate",
+      "swivel_angle_deg": -7.06050366561197,
+      "position_error_mm": 9.364742733544762e-05,
+      "rotation_error_deg": 1.2547858734911261e-05,
+      "color": "#00b4d8"
+    },
+    {
+      "id": 3,
+      "name": "Traj 3: Swivel Neutral Center",
+      "swivel_angle_deg": 2.310938181312876e-16,
+      "position_error_mm": 0.0,
+      "rotation_error_deg": 4.353408482428142e-06,
+      "color": "#2a9d8f"
+    },
+    {
+      "id": 4,
+      "name": "Traj 4: Swivel Right Moderate",
+      "swivel_angle_deg": 7.060503665611977,
+      "position_error_mm": 9.36474274838541e-05,
+      "rotation_error_deg": 1.2313298636799924e-05,
+      "color": "#e76f51"
+    },
+    {
+      "id": 5,
+      "name": "Traj 5: Swivel Right Extreme",
+      "swivel_angle_deg": 13.34816665079286,
+      "position_error_mm": 9.93693725137321e-05,
+      "rotation_error_deg": 1.2489631698061449e-05,
+      "color": "#d62828"
+    }
+  ],
+  "output_files": [
+    "figures/franka_3d_nullspace_mujoco_composite.png",
+    "figures/franka_3d_nullspace_multiview.png",
+    "figures/franka_3d_skeletal_trajectories.png",
+    "figures/franka_3d_nullspace_swivel_animation.gif"
+  ]
+}

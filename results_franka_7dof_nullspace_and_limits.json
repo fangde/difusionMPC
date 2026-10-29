@@ -1,0 +1,50 @@
+{
+  "system": "Franka Emika Panda (7-DOF)",
+  "task": "6-DOF Cartesian End-Effector Reaching",
+  "null_space_dimension": 1,
+  "target_ee_pos": [
+    0.30701957005161024,
+    4.246272246536378e-18,
+    0.5902695582766444
+  ],
+  "joint_limits": {
+    "q_min": [
+      -2.8973,
+      -1.7628,
+      -2.8973,
+      -3.0718,
+      -2.8973,
+      -0.0175,
+      -2.8973
+    ],
+    "q_max": [
+      2.8973,
+      1.7628,
+      2.8973,
+      -0.0698,
+      2.8973,
+      3.7525,
+      2.8973
+    ]
+  },
+  "null_space_eval": {
+    "bc_pos_error_mm": 3.653389925871451,
+    "bc_rot_error_deg": 0.2248810599295775,
+    "bc_swivel_deg": -0.024510557135213842,
+    "cfm_mean_pos_error_mm": 0.8595082551565734,
+    "cfm_max_pos_error_mm": 4.220291823370633,
+    "cfm_mean_rot_error_deg": 0.07349222404529583,
+    "cfm_swivel_min_deg": -19.412817282684,
+    "cfm_swivel_max_deg": 17.738604149279638,
+    "cfm_swivel_span_deg": 37.15142143196364
+  },
+  "joint_limit_eval": {
+    "unconstrained_violations": 21,
+    "unconstrained_max_q1": 2.9999999999999947,
+    "diffeomorphic_violations": 0,
+    "diffeomorphic_max_q1": 2.897299999393401,
+    "cbf_violations": 0,
+    "cbf_max_q1": 2.781964594081663,
+    "null_space_task_disturbance_mm": 2.4514460037555694e-13
+  }
+}
